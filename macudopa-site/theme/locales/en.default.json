@@ -1,0 +1,26 @@
+{
+  "general": {
+    "newsletter": {
+      "email_placeholder": "Email address",
+      "subscribe": "Sign up",
+      "success": "Thanks for subscribing."
+    },
+    "accessibility": {
+      "home": "Home",
+      "open_menu": "Open menu",
+      "close_menu": "Close menu",
+      "menu": "Menu",
+      "alt_cart": "Cart",
+      "alt_account": "Account",
+      "skip_to_content": "Skip to content"
+    },
+    "filters": {
+      "aria": "Filter products"
+    },
+    "metafields": {
+      "note": "Product metafields namespace: mcp (category, formula, meta, badge, is_bundle, line_one, line_two)"
+    }
+  },
+  "skip_to_content": { "skip_to_content": "Skip to content" }
+
+}

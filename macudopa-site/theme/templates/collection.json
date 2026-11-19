@@ -1,0 +1,18 @@
+[
+  {
+    "type": "shop-banner",
+    "blocks": [
+      { "type": "eyebrow", "settings": { "text": "The range" } },
+      { "type": "headline", "settings": { "text": "Day to night, precisely dosed." } },
+      { "type": "body", "settings": { "text": "HPLC standardised Mucuna pruriens with added BF12. Choose your formula, or a bundle." } },
+      { "type": "button", "settings": { "label": "Shop all", "url": "/collections/all" } }
+    ]
+  },
+  {
+    "type": "product-grid",
+    "settings": { "collection": "all" }
+  },
+  {
+    "type": "newsletter"
+  }
+]

@@ -1,0 +1,38 @@
+<section class="section testimonial" data-section-id="{{ section.id }}">
+  <div class="container">
+    {%- for block in section.blocks -%}
+      <div class="testimonial-item" {{ block.id | escape }}>
+        <div class="quote-mark" aria-hidden="true">"</div>
+        <blockquote>{{ block.settings.quote }}</blockquote>
+        <cite>{{ block.settings.attribution }}</cite>
+      </div>
+      {% render 'section-spacing', block: block %}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonial",
+  "tag": "section",
+  "class": "section-testimonial",
+  "blocks": [
+    {
+      "type": "quote",
+      "name": "Quote",
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "Worked so much better than synthetic PD drugs. Completely natural, quicker effect, you stay on longer, and the night tablet is a game changer. No more waking up and not being able to move." },
+        { "type": "text", "id": "attribution", "label": "Attribution", "default": "Name, Country" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial",
+      "blocks": [
+        { "type": "quote" }
+      ]
+    }
+  ]
+}
+{% endschema %}

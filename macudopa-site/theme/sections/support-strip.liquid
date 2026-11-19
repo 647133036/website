@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="support-strip">
+    <div>
+      <p class="sub">{{ section.settings.label }}</p>
+      <h2 class="display">{{ section.settings.heading }}</h2>
+      {%- if section.settings.body != blank -%}
+        <p class="body-copy" style="margin-top:18px">{{ section.settings.body }}</p>
+      {%- endif -%}
+    </div>
+    <div style="display:grid;gap:14px;justify-items:start">
+      {%- if section.settings.primary_label != blank -%}
+        <a class="btn btn-primary" href="{{ section.settings.primary_url }}">{{ section.settings.primary_label }}</a>
+      {%- endif -%}
+      {%- if section.settings.secondary_label != blank -%}
+        <a class="btn btn-ghost" href="{{ section.settings.secondary_url }}">{{ section.settings.secondary_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Support strip",
+  "tag": "section",
+  "class": "section-support-strip",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Practitioner guided" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Still have a question? Talk to us." },
+    { "type": "textarea", "id": "body", "label": "Body", "default": "Our practitioners work with you to find your rhythm and dosage, so you feel steadier, brighter and more like yourself." },
+    { "type": "text", "id": "primary_label", "label": "Primary label", "default": "Contact us" },
+    { "type": "url", "id": "primary_url", "label": "Primary URL", "default": "/pages/contact" },
+    { "type": "text", "id": "secondary_label", "label": "Secondary label", "default": "Write to hello@macudopa.com" },
+    { "type": "url", "id": "secondary_url", "label": "Secondary URL", "default": "mailto:hello@macudopa.com" }
+  ],
+  "presets": [
+    { "name": "Support strip" }
+  ]
+}
+{% endschema %}

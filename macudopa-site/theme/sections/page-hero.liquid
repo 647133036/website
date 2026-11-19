@@ -1,0 +1,44 @@
+<section class="page-hero" data-section-id="{{ section.id }}">
+  <div class="container">
+    {%- for block in section.blocks -%}
+      {% case block.type %}
+      {%- when 'eyebrow' -%}
+        <p class="sub">{{ block.settings.text }}</p>
+      {%- when 'title' -%}
+        <h1 class="display" style="margin-top:16px">{{ block.settings.text }}</h1>
+      {%- when 'body' -%}
+        <p class="body-copy" style="margin-top:16px">{{ block.settings.text }}</p>
+      {%- endcase -%}
+      {% render 'section-spacing', block: block %}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page hero",
+  "tag": "section",
+  "class": "section-page-hero",
+  "blocks": [
+    { "type": "eyebrow", "name": "Eyebrow", "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "Good to know" }
+    ]},
+    { "type": "title", "name": "Title", "limit": 1, "settings": [
+      { "type": "text", "id": "text", "label": "Title", "default": "Frequently asked questions" }
+    ]},
+    { "type": "body", "name": "Body", "settings": [
+      { "type": "textarea", "id": "text", "label": "Body" }
+    ]}
+  ],
+  "presets": [
+    {
+      "name": "Page hero",
+      "blocks": [
+        { "type": "eyebrow" },
+        { "type": "title" },
+        { "type": "body" }
+      ]
+    }
+  ]
+}
+{% endschema %}

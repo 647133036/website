@@ -1,0 +1,65 @@
+<!doctype html>
+<html class="{{ page_title | escape }} {{ request.page_type }}" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_macuna_purple }}">
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+  {%- liquid
+    assign canonical_url = canonical_url | default: request.origin
+    if request.page_type != 'product' or page.canonical_url
+      assign canonical_url = page.canonical_url | default: canonical_url
+    endif
+  -%}
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  <title>
+    {{- page_title -}}
+    {%- if page_description -} – {{ page_description | truncate: 120 }}{% endif -%}
+    {%- if page_title != settings.store_name -} | {{ settings.store_name }}{% endif -%}
+  </title>
+
+  <meta name="description" content="{{ page_description | default: settings.meta_description | escape }}">
+
+  {%- if settings.enable_opengraph -%}
+    <meta property="og:site_name" content="{{ settings.store_name }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:title" content="{{ page_title }}">
+    <meta property="og:description" content="{{ page_description | default: settings.meta_description }}">
+    {%- if page.image -%}
+      <meta property="og:image" content="http:{{ page.image | image_url: width: 1200 }}">
+    {%- endif -%}
+  {%- endif -%}
+
+  <meta name="twitter:card" content="{{ page.image ? 'summary_large_image' : 'summary' }}">
+  <meta name="twitter:site" content="@{{ settings.social_twitter_handle }}">
+  <meta name="twitter:creator" content="@{{ settings.social_twitter_handle }}">
+
+  <script defer src="{{ 'theme.js' | asset_url }}" data-shopify></script>
+  <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
+
+</head>
+
+<body class="template-{{ template.name | default: 'index' }}" id="{{ section_id }}">
+  <a class="skip-to-content" href="#MainContent">Skip to content</a>
+
+  {% sections 'header-group', section-ids: 'header' %}
+  {% section 'header' %}
+
+  <main id="MainContent" class="content" tabindex="-1">
+    {% content_for 'main' %}
+  </main>
+
+  {% section 'footer' %}
+
+  <script>
+    window.shopify = window.shopify || {};
+    window.shopify.locales = {{ 'en' | json }};
+    window.theme = {{ theme_settings_json }};
+  </script>
+  {% if request.design_mode? -%}
+    <script src="{{ '/admin/theme_update.js' | url_to_content_tag }}" data-shopify></script>
+  {%- endif %}
+</body>
+</html>

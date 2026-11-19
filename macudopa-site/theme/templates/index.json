@@ -1,0 +1,31 @@
+[
+  {
+    "type": "hero",
+    "settings": {
+      "style": "split",
+      "full_width": true,
+      "scrim_intensity": 55
+    },
+    "blocks": [
+      { "type": "eyebrow", "settings": { "text": "Natural & precise", "accent": true } },
+      { "type": "headline", "settings": { "text": "The power of nature. The precision of science." } },
+      { "type": "subhead", "settings": { "text": "Natural Parkinson's support with precise dosage. Grown from the Mucuna plant, refined by science, and guided by practitioners." } },
+      { "type": "buttons", "settings": { "primary_label": "Shop range", "primary_url": "/collections/all", "primary_style": "btn-orange", "secondary_label": "Our story", "secondary_url": "/pages/our-story" } }
+    ]
+  },
+  {
+    "type": "timing-stats"
+  },
+  {
+    "type": "support-cards"
+  },
+  {
+    "type": "continuum-timeline"
+  },
+  {
+    "type": "testimonial"
+  },
+  {
+    "type": "newsletter"
+  }
+]

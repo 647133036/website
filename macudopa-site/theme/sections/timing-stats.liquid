@@ -1,0 +1,60 @@
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      <div class="section-head">
+        <p class="sub">{{ section.settings.label }}</p>
+        <h2 class="display">{{ section.settings.heading }}</h2>
+        {%- if section.settings.body != blank -%}
+          <p class="body-copy" style="margin-top:18px">{{ section.settings.body }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="timing-grid">
+      {%- for block in section.blocks -%}
+        <div class="stat-block" {{ block.id | escape }}>
+          <p class="sub">{{ block.settings.title }}</p>
+          <div class="stat-value" style="margin-top:18px">
+            {{ block.settings.value }}
+            <span class="stat-unit">{{ block.settings.unit }}</span>
+          </div>
+        </div>
+        {% render 'section-spacing', block: block %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Find your timing",
+  "tag": "section",
+  "class": "section-timing",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Section label", "default": "On and on and on" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Fewer 'off' periods, so you can feel steadier, brighter, and more like yourself." },
+    { "type": "textarea", "id": "body", "label": "Body", "default": "MacuDopa helps keep dopamine steady and avoids 'off' periods. Find your timing and stay on for longer." }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "max": 4,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Find your timing" },
+        { "type": "text", "id": "value", "label": "Value", "default": "20–40" },
+        { "type": "text", "id": "unit", "label": "Unit / caption", "default": "mins until effects come on" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Find your timing",
+      "blocks": [
+        { "type": "stat", "settings": { "title": "Find your timing", "value": "20–40", "unit": "mins until effects come on" } },
+        { "type": "stat", "settings": { "title": "Stay on", "value": "1.5–2.5", "unit": "hours of steady support" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

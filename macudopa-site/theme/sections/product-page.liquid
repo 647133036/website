@@ -1,0 +1,72 @@
+<div class="container">
+  <section class="product-page" data-section-id="{{ section.id }}">
+    <div class="product-page__grid">
+      <div class="product-page__media">
+        {%- if product.featured_image -%}
+          <img
+            class="product-page__img"
+            src="{{ product.featured_image | image_url: width: 1200 }}"
+            alt="{{ product.featured_image.alt | escape }}"
+          >
+        {%- else -%}
+          <div class="product-page__placeholder"></div>
+        {%- endif -%}
+      </div>
+
+      <div class="product-page__info">
+        <h1 class="product-title display" style="font-size:clamp(1.8rem,4vw,2.6rem)">{{ product.title }}</h1>
+        <p class="price display" style="font-size:1.6rem;margin:14px 0">{{ product.price | money }}</p>
+
+        {%- if product.metafields.mcp.meta != blank -%}
+          <p class="body-copy" style="margin-bottom:22px">{{ product.metafields.mcp.meta }}</p>
+        {%- endif -%}
+
+        {%- if product.has_only_default_variant -%}
+          <form action="/cart/add" method="post" class="product-form">
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+            <button class="btn btn-primary" type="submit" style="width:100%">{{ section.settings.add_to_cart_label }}</button>
+          </form>
+        {%- else -%}
+          <form action="/cart/add" method="post" class="product-form" data-product-form>
+            {%- for variant in product.variants -%}
+              <label class="variant-option">
+                <input type="radio" name="id" value="{{ variant.id }}" {%- if forloop.first -%} checked{% endif -%}>
+                <span class="variant-option__label">{{ variant.title }}</span>
+              </label>
+            {%- endfor -%}
+            <button class="btn btn-primary" type="submit" style="width:100%">{{ section.settings.add_to_cart_label }}</button>
+          </form>
+        {%- endif -%}
+
+        {%- if product.metafields.mcp.line_one != blank -%}
+          <ul class="product-specs">
+            <li>{{ product.metafields.mcp.line_one }}</li>
+            <li>{{ product.metafields.mcp.line_two }}</li>
+            <li>{{ section.settings.shipping_note }}</li>
+          </ul>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if section.settings.show_description -%}
+      <div class="product-page__desc">
+        {{ product.description }}
+      </div>
+    {%- endif -%}
+  </section>
+
+  {% section 'product-recommendations', product: product %}
+</div>
+
+{% schema %}
+{
+  "name": "Product page",
+  "tag": "section",
+  "class": "section-product",
+  "settings": [
+    { "type": "text", "id": "add_to_cart_label", "label": "Add to cart label", "default": "Add to cart" },
+    { "type": "text", "id": "shipping_note", "label": "Shipping / specs note", "default": "Ships in 1–2 working days. 30-day returns." },
+    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true }
+  ]
+}
+{% endschema %}

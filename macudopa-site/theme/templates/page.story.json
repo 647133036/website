@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "story-hero": {
+      "type": "hero",
+      "settings": { "style": "split", "full_width": false },
+      "blocks": {
+        "eyebrow": { "type": "eyebrow", "settings": { "text": "Our story", "accent": true } },
+        "headline": { "type": "headline", "settings": { "text": "Innovative. Optimistic. Empowering." } },
+        "subhead": { "type": "subhead", "settings": { "text": "A brand that brings together two usually distant worlds, natural medicine and predictable performance, so people with Parkinson's can find steady hope." } }
+      },
+      "block_order": ["eyebrow", "headline", "subhead"]
+    },
+    "values": { "type": "values-grid" },
+    "story-split": { "type": "story-split" },
+    "support": { "type": "support-strip", "settings": { "label": "Practitioner guided", "heading": "Support that walks with you.", "primary_label": "Shop the range", "primary_url": "/collections/all", "secondary_label": "" } }
+  },
+  "order": ["story-hero", "values", "story-split", "support"]
+}

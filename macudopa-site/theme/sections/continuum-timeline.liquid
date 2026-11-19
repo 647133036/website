@@ -1,0 +1,84 @@
+<section class="section continuum" data-section-id="{{ section.id }}">
+  <div class="container continuum-grid">
+    <div>
+      <p class="sub light">{{ section.settings.label }}</p>
+      <h2 class="display" style="margin:16px 0">{{ section.settings.heading }}</h2>
+      <p class="body-copy">{{ section.settings.body }}</p>
+      <div class="continuum-stats" style="margin-top:32px">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'stat' -%}
+            <div class="cont-stat">
+              <div class="stat-value">{{ block.settings.value }}<span class="stat-unit">{{ block.settings.unit }}</span></div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="timeline-panel">
+      <p class="sub light" style="margin-bottom:22px">{{ section.settings.timeline_label }}</p>
+
+      <div class="timeline-labels" aria-hidden="true">
+        <span>12am</span><span></span><span></span><span>3am</span><span></span><span></span><span>6am</span><span></span><span></span><span>9am</span><span></span><span></span><span>12pm</span><span></span><span></span><span>3pm</span><span></span><span></span><span>6pm</span><span></span><span></span><span>9pm</span><span></span><span></span>
+      </div>
+
+      <div class="timeline-band" role="img" aria-label="{{ section.settings.timeline_aria }}">
+        <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div>
+        <div class="seg off"></div><div class="seg off"></div>
+        <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div>
+        <div class="seg fade"></div><div class="seg fade"></div>
+        <div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div><div class="seg on"></div>
+      </div>
+
+      <div class="timeline-doses" aria-hidden="true">
+        <span class="dose night" style="grid-column: 1">Night</span>
+        <span class="dose day" style="grid-column: 7">Day</span>
+        <span class="dose day" style="grid-column: 13">Day</span>
+        <span class="dose day" style="grid-column: 17">Day</span>
+        <span class="dose night" style="grid-column: 19">Night</span>
+        <span class="dose night" style="grid-column: 24">Night</span>
+      </div>
+
+      <div class="legend">
+        <span><i class="lg-on"></i>On — symptom control</span>
+        <span><i class="lg-fade"></i>Fade — coming on</span>
+        <span><i class="lg-off"></i>Off — pre-dawn dip</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Continuum Method",
+  "tag": "section",
+  "class": "section-continuum",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Section label", "default": "24-hour symptom control" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The Continuum Method" },
+    { "type": "textarea", "id": "body", "label": "Body", "default": "Take your next dose of MacuDopa just before the last one fades. This helps keep dopamine steady and avoids 'off' periods, so you stay on for longer across the whole day." },
+    { "type": "text", "id": "timeline_label", "label": "Timeline label", "default": "Symptom control timeline" },
+    { "type": "text", "id": "timeline_aria", "label": "Timeline aria label", "default": "24 hour symptom control timeline showing on, fade and off periods" }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "max": 3,
+      "settings": [
+        { "type": "text", "id": "value", "label": "Value", "default": "24" },
+        { "type": "text", "id": "unit", "label": "Unit / caption", "default": "hours of planned coverage" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Continuum Method",
+      "blocks": [
+        { "type": "stat", "settings": { "value": "24", "unit": "hours of planned coverage" } },
+        { "type": "stat", "settings": { "value": "Fewer", "unit": "'off' periods through the day" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

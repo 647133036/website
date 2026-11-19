@@ -1,0 +1,50 @@
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    <div class="shop-toolbar">
+      <div class="filter-chips" role="group" aria-label="{{ 'general.filters.aria' | t }}">
+        <button class="chip active" data-filter="all">{{ section.settings.all_label }}</button>
+        <button class="chip" data-filter="day">{{ section.settings.day_label }}</button>
+        <button class="chip" data-filter="night">{{ section.settings.night_label }}</button>
+        <button class="chip" data-filter="bundle">{{ section.settings.bundle_label }}</button>
+      </div>
+      <div class="sort-control">
+        <label for="shop-sort">{{ section.settings.sort_label }}</label>
+        <select id="shop-sort" data-sort>
+          <option value="manual">{{ section.settings.sort_featured }}</option>
+          <option value="price-ascending">{{ section.settings.sort_ascending }}</option>
+          <option value="price-descending">{{ section.settings.sort_descending }}</option>
+        </select>
+      </div>
+    </div>
+
+    <form action="{{ section.settings.collection | default: 'all' | prepend: '/collections/' }}" method="get" class="shop-form">
+      <div class="product-grid" id="product-grid" data-grid>
+        {%- for product in collections[section.settings.collection].products -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    </form>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "tag": "section",
+  "class": "section-product-grid",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection", "default": "all" },
+    { "type": "text", "id": "all_label", "label": "All filter", "default": "All" },
+    { "type": "text", "id": "day_label", "label": "Day filter", "default": "Day" },
+    { "type": "text", "id": "night_label", "label": "Night filter", "default": "Night" },
+    { "type": "text", "id": "bundle_label", "label": "Bundle filter", "default": "Bundles" },
+    { "type": "text", "id": "sort_label", "label": "Sort label", "default": "Sort by" },
+    { "type": "text", "id": "sort_featured", "label": "Sort featured", "default": "Featured" },
+    { "type": "text", "id": "sort_ascending", "label": "Sort ascending", "default": "Price: low to high" },
+    { "type": "text", "id": "sort_descending", "label": "Sort descending", "default": "Price: high to low" }
+  ],
+  "presets": [
+    { "name": "Product grid" }
+  ]
+}
+{% endschema %}

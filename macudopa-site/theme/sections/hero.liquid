@@ -1,0 +1,119 @@
+<section
+  class="hero hero--{{ section.settings.style }}"
+  data-section-id="{{ section.id }}"
+  {%- if section.settings.full_width -%} data-full-width{% endif -%}
+>
+  {%- if section.settings.image != blank -%}
+    <img
+      class="hero__bg"
+      src="{{ section.settings.image | image_url: width: 2400 }}"
+      alt="{{ section.settings.image.alt | escape }}"
+      {%- unless section.settings.image.lazy -%} loading="lazy"{%- endunless -%}
+    >
+  {%- else -%}
+    <div class="hero__bg" style="background:linear-gradient(140deg,{{ section.settings.gradient_from | default: '#2B0512' }},{{ section.settings.gradient_to | default: '#FFA91F' }})"></div>
+  {%- endif -%}
+
+  <div class="hero-scrim" data-scrim="{{ section.settings.scrim_intensity }}"></div>
+
+  <div class="container">
+    <div class="hero-inner">
+      {%- for block in section.blocks -%}
+        {% case block.type %}
+
+        {%- when 'eyebrow' -%}
+          <p class="sub {{ block.settings.accent ? 'accent' : '' }}" {{ block.id | escape }}>{{ block.settings.text }}</p>
+
+        {%- when 'headline' -%}
+          <h1 class="display">{{ block.settings.text }}</h1>
+
+        {%- when 'subhead' -%}
+          <p class="body-copy">{{ block.settings.text }}</p>
+
+        {%- when 'buttons' -%}
+          <div class="hero-cta-row">
+            {%- if block.settings.primary_label != blank -%}
+              <a class="btn {{ block.settings.primary_style }}" href="{{ block.settings.primary_url }}">{{ block.settings.primary_label }}</a>
+            {%- endif -%}
+            {%- if block.settings.secondary_label != blank -%}
+              <a class="btn btn-ghost-light" href="{{ block.settings.secondary_url }}">{{ block.settings.secondary_label }}</a>
+            {%- endif -%}
+          </div>
+
+        {%- endcase -%}
+        {% render 'section-spacing', block: block %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "section",
+  "class": "section-hero",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image (placeholder: replace with licensed photo)" },
+    { "type": "color", "id": "gradient_from", "label": "Gradient from", "default": "#2B0512" },
+    { "type": "color", "id": "gradient_to", "label": "Gradient to", "default": "#FFA91F" },
+    { "type": "range", "id": "scrim_intensity", "label": "Scrim intensity", "min": 0, "max": 100, "step": 5, "default": 55, "unit": "%" },
+    { "type": "select", "id": "style", "label": "Layout", "default": "split", "options": [
+      { "value": "split", "label": "Split (text left)" },
+      { "value": "center", "label": "Centered" },
+      { "value": "compact", "label": "Compact" }
+    ]},
+    { "type": "checkbox", "id": "full_width", "label": "Full width", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "eyebrow",
+      "name": "Eyebrow",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Natural & precise" },
+        { "type": "checkbox", "id": "accent", "label": "Accent (orange)", "default": true }
+      ]
+    },
+    {
+      "type": "headline",
+      "name": "Headline",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Headline", "default": "The power of nature. The precision of science." }
+      ]
+    },
+    {
+      "type": "subhead",
+      "name": "Subheadline",
+      "settings": [
+        { "type": "textarea", "id": "text", "label": "Subheadline", "default": "Natural Parkinson's support with precise dosage. Grown from the Mucuna plant, refined by science, and guided by practitioners." }
+      ]
+    },
+    {
+      "type": "buttons",
+      "name": "Buttons",
+      "settings": [
+        { "type": "text", "id": "primary_label", "label": "Primary label", "default": "Shop range" },
+        { "type": "url", "id": "primary_url", "label": "Primary URL", "default": "/collections/all" },
+        { "type": "select", "id": "primary_style", "label": "Primary style", "default": "btn-orange", "options": [
+          { "value": "btn-orange", "label": "Orange" },
+          { "value": "btn-primary", "label": "Macuna Purple" },
+          { "value": "btn-ghost-light", "label": "Ghost light" }
+        ]},
+        { "type": "text", "id": "secondary_label", "label": "Secondary label", "default": "Our story" },
+        { "type": "url", "id": "secondary_url", "label": "Secondary URL", "default": "/pages/our-story" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [
+        { "type": "eyebrow" },
+        { "type": "headline" },
+        { "type": "subhead" },
+        { "type": "buttons" }
+      ]
+    }
+  ]
+}
+{% endschema %}

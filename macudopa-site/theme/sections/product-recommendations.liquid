@@ -1,0 +1,27 @@
+{%- if recommendations.products.size > 0 -%}
+  <section class="section" data-section-id="{{ section.id }}">
+    <div class="container">
+      <div class="section-head">
+        <p class="sub">{{ section.settings.label }}</p>
+        <h2 class="display">{{ section.settings.heading }}</h2>
+      </div>
+      <div class="product-grid">
+        {%- for rec in recommendations.products -%}
+          {% render 'product-card', product: rec %}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "tag": "section",
+  "class": "section-recommendations",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Complete the routine" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Pairs well with" }
+  ]
+}
+{% endschema %}

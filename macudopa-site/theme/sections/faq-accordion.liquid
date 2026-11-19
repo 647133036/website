@@ -1,0 +1,50 @@
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:900px">
+    <div class="faq-list" data-faq>
+      {%- for block in section.blocks -%}
+        <div class="faq-item" data-faq-item>
+          <button class="faq-q" type="button" aria-expanded="false" data-faq-toggle>
+            <span>{{ block.settings.question }}</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a" data-faq-answer>
+            <div class="faq-a-inner">
+              <p>{{ block.settings.answer }}</p>
+            </div>
+          </div>
+        </div>
+        {% render 'section-spacing', block: block %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ accordion",
+  "tag": "section",
+  "class": "section-faq",
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question" },
+        { "type": "textarea", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ accordion",
+      "blocks": [
+        { "type": "faq", "settings": { "question": "What is Mucuna pruriens?", "answer": "Mucuna pruriens, also known as the velvet bean, has been used for millennia and naturally contains L-DOPA, the compound your body converts into dopamine." } },
+        { "type": "faq", "settings": { "question": "How do I take MacuDopa?", "answer": "Take your next dose just before the last one fades, to keep dopamine steady. Our practitioners help you find your rhythm." } },
+        { "type": "faq", "settings": { "question": "How is natural L-DOPA different from synthetic L-DOPA?", "answer": "Both replace lost dopamine. MacuDopa uses Mucuna made to measure, HPLC standardised, so every capsule is precise and predictable, in a whole natural ingredient." } },
+        { "type": "faq", "settings": { "question": "Who can I talk to for support?", "answer": "MacuDopa is practitioner guided. Our guides and practitioners are on hand when you need to talk. Write to hello@macudopa.com." } },
+        { "type": "faq", "settings": { "question": "What are 'off' periods?", "answer": "'Off' periods are times when stiffness, slowness, tremor, anxiety or brain fog return or worsen, usually when dopamine levels drop. Dosing just before the last one fades helps keep them fewer." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

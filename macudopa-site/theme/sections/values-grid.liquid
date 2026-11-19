@@ -1,0 +1,54 @@
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      <div class="section-head">
+        <p class="sub">{{ section.settings.label }}</p>
+        <h2 class="display">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="values-grid">
+      {%- for block in section.blocks -%}
+        <div class="value-card" {{ block.id | escape }}>
+          <span class="num">{{ forloop.index | prepend: '0' }}</span>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.body }}</p>
+        </div>
+        {% render 'section-spacing', block: block %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Values grid",
+  "tag": "section",
+  "class": "section-values",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Section label", "default": "Our values" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Three ideas that shape everything we make." }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "max": 4,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Innovative" },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "No two Parkinson's patients are the same. We create more precise, consistent and personalised approaches to supporting their symptoms, dose after dose." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Values grid",
+      "blocks": [
+        { "type": "value", "settings": { "title": "Innovative", "body": "No two Parkinson's patients are the same. We create more precise, consistent and personalised approaches to supporting their symptoms." } },
+        { "type": "value", "settings": { "title": "Optimistic", "body": "Many people come to us feeling low or frustrated. Our role is to help shift that towards feeling more steady, more able, and more like who they were before." } },
+        { "type": "value", "settings": { "title": "Empowering", "body": "We give people with Parkinson's the products, knowledge and confidence to better manage their symptoms and become their own advocate." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

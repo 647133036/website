@@ -1,0 +1,52 @@
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container story-split">
+    <div>
+      <p class="sub">{{ section.settings.label }}</p>
+      <h2 class="display">{{ section.settings.heading }}</h2>
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'body' -%}
+          <p class="body-copy" style="margin-top:20px">{{ block.settings.text }}</p>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.image != blank -%}
+      <div class="botanical-panel">
+        <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt | escape }}" loading="lazy">
+        <div class="panel-copy">
+          <p class="sub light">{{ section.settings.image_label }}</p>
+          <h3 class="display" style="font-size:1.6rem;margin-top:12px">{{ section.settings.image_heading }}</h3>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story split",
+  "tag": "section",
+  "class": "section-story-split",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Section label", "default": "How it started" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "A life, and a reason." },
+    { "type": "image_picker", "id": "image", "label": "Botanical / side image (placeholder: replace with licensed)" },
+    { "type": "text", "id": "image_label", "label": "Image label", "default": "Rooted in nature" },
+    { "type": "text", "id": "image_heading", "label": "Image heading", "default": "Mucuna, made to measure." }
+  ],
+  "blocks": [
+    { "type": "body", "name": "Body", "max": 3, "settings": [
+      { "type": "textarea", "id": "text", "label": "Text", "default": "MacuDopa was born from the experience of someone we love. A successful career, a diagnosis with Parkinson's at 48, and a search for a natural alternative that had simply not existed." }
+    ]}
+  ],
+  "presets": [
+    {
+      "name": "Story split",
+      "blocks": [
+        { "type": "body" },
+        { "type": "body", "settings": { "text": "Every movement, every quiet moment of stillness, every tremor we have watched taught us what a support product must do: be precise, be gentle, and stay with you." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

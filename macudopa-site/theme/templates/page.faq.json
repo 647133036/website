@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "page-hero": {
+      "type": "page-hero",
+      "blocks": {
+        "eyebrow": { "type": "eyebrow", "settings": { "text": "Good to know" } },
+        "title": { "type": "title", "settings": { "text": "Frequently asked questions" } },
+        "body": { "type": "body", "settings": { "text": "The answers to what people ask most often about MacuDopa, Mucuna and finding your timing." } }
+      },
+      "block_order": ["eyebrow", "title", "body"]
+    },
+    "faq": { "type": "faq-accordion" },
+    "support": { "type": "support-strip" }
+  },
+  "order": ["page-hero", "faq", "support"]
+}

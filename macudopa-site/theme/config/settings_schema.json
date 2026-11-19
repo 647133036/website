@@ -1,0 +1,54 @@
+[
+  {
+    "selector": "color",
+    "category": "Colors",
+    "settings": [
+      { "type": "color", "id": "color_precision_white", "label": "Precision White", "default": "#FBF5E3", "info": "Page background, light text" },
+      { "type": "color", "id": "color_macuna_purple", "label": "Macuna Purple", "default": "#2B0512", "info": "Primary type, dark sections, buttons" },
+      { "type": "color", "id": "color_day_orange", "label": "Day Orange", "default": "#FFA91F", "info": "Day formula accent, CTA" },
+      { "type": "color", "id": "color_night_purple", "label": "Night Purple", "default": "#B46BA3", "info": "Night formula accent" },
+      { "type": "color", "id": "color_support_green", "label": "Support Green", "default": "#83B881", "info": "On state, trust" }
+    ]
+  },
+  {
+    "selector": "typography",
+    "settings": [
+      { "type": "font_picker", "id": "type_font_display", "label": "Display / Titles (Caslon Ionic Rounded stand-in)", "default": "bitter_n3" },
+      { "type": "font_picker", "id": "type_font_product", "label": "Product titles / wordmark (Memoir stand-in)", "default": "fraunces_n6" },
+      { "type": "font_picker", "id": "type_font_body", "label": "Body / labels (TWK Lausanne stand-in)", "default": "hanken_grotesk_n3" },
+      { "type": "range", "id": "type_body_size", "label": "Body size", "min": 14, "max": 20, "step": 1, "default": 17, "unit": "px" },
+      { "type": "checkbox", "id": "type_swap_commercial", "label": "Swap in licensed fonts", "default": false, "info": "Enable when Caslon Ionic Rounded and TWK Lausanne are licensed and uploaded." }
+    ]
+  },
+  {
+    "selector": "logo",
+    "settings": [
+      { "type": "image_picker", "id": "logo_image", "label": "Logo (leave blank to use generated pod mark)" },
+      { "type": "checkbox", "id": "show_symbol", "label": "Show pod symbol", "default": true }
+    ]
+  },
+  {
+    "selector": "social",
+    "settings": [
+      { "type": "text", "id": "social_instagram", "label": "Instagram URL" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube URL" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok URL" },
+      { "type": "text", "id": "social_twitter_handle", "label": "Twitter handle", "default": "macudopa" }
+    ]
+  },
+  {
+    "selector": "social_share_image",
+    "settings": [
+      { "type": "image_picker", "id": "social_share_image", "label": "Default share image" },
+      { "type": "checkbox", "id": "enable_opengraph", "label": "Enable Open Graph", "default": true }
+    ]
+  },
+  {
+    "selector": "general",
+    "settings": [
+      { "type": "checkbox", "id": "sticky_header", "label": "Sticky header", "default": true },
+      { "type": "range", "id": "page_width", "label": "Max page width", "min": 900, "max": 1440, "step": 20, "default": 1280, "unit": "px" },
+      { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 40, "step": 2, "default": 28, "unit": "px" }
+    ]
+  }
+]

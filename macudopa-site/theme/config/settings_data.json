@@ -1,0 +1,20 @@
+{
+  "settings": {
+    "color_precision_white": "#FBF5E3",
+    "color_macuna_purple": "#2B0512",
+    "color_day_orange": "#FFA91F",
+    "color_night_purple": "#B46BA3",
+    "color_support_green": "#83B881",
+    "type_font_display": "bitter_n3",
+    "type_font_product": "fraunces_n6",
+    "type_font_body": "hanken_grotesk_n3",
+    "type_body_size": 17,
+    "type_swap_commercial": false,
+    "show_symbol": true,
+    "social_twitter_handle": "macudopa",
+    "enable_opengraph": true,
+    "sticky_header": true,
+    "page_width": 1280,
+    "card_radius": 28
+  }
+}

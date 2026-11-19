@@ -1,0 +1,64 @@
+<section class="shop-banner" data-section-id="{{ section.id }}">
+  {%- if section.settings.image != blank -%}
+    <img src="{{ section.settings.image | image_url: width: 2000 }}" alt="{{ section.settings.image.alt | escape }}" loading="lazy">
+  {%- else -%}
+    <div class="shop-banner__bg" style="background:linear-gradient(140deg,{{ section.settings.from | default: '#FBF5E3' }},{{ section.settings.to | default: '#FFA91F' }})"></div>
+  {%- endif -%}
+  <div class="scrim"></div>
+  <div class="container">
+    <div class="banner-copy">
+      {%- for block in section.blocks -%}
+        {% case block.type %}
+        {%- when 'eyebrow' -%}
+          <p class="sub accent">{{ block.settings.text }}</p>
+        {%- when 'headline' -%}
+          <h1 class="display" style="margin-top:14px">{{ block.settings.text }}</h1>
+        {%- when 'body' -%}
+          <p class="body-copy" style="margin:14px 0 24px">{{ block.settings.text }}</p>
+        {%- when 'button' -%}
+          <a class="btn btn-orange" href="{{ block.settings.url }}">{{ block.settings.label }}</a>
+        {%- endcase -%}
+        {% render 'section-spacing', block: block %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop banner",
+  "tag": "section",
+  "class": "section-shop-banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Banner image (placeholder: replace with licensed shot)" },
+    { "type": "color", "id": "from", "label": "Fallback from", "default": "#FBF5E3" },
+    { "type": "color", "id": "to", "label": "Fallback to", "default": "#FFA91F" }
+  ],
+  "blocks": [
+    { "type": "eyebrow", "name": "Eyebrow", "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "The range" }
+    ]},
+    { "type": "headline", "name": "Headline", "limit": 1, "settings": [
+      { "type": "text", "id": "text", "label": "Headline", "default": "Day to night, precisely dosed." }
+    ]},
+    { "type": "body", "name": "Body", "settings": [
+      { "type": "textarea", "id": "text", "label": "Body", "default": "HPLC standardised Mucuna pruriens with added BF12. Choose your formula, or a bundle." }
+    ]},
+    { "type": "button", "name": "Button", "limit": 1, "settings": [
+      { "type": "text", "id": "label", "label": "Label", "default": "Shop all" },
+      { "type": "url", "id": "url", "label": "URL", "default": "/collections/all" }
+    ]}
+  ],
+  "presets": [
+    {
+      "name": "Shop banner",
+      "blocks": [
+        { "type": "eyebrow" },
+        { "type": "headline" },
+        { "type": "body" },
+        { "type": "button" }
+      ]
+    }
+  ]
+}
+{% endschema %}

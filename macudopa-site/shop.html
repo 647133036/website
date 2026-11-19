@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shop — MacuDopa</title>
+  <meta name="description" content="Shop MacuDopa Day, Night and bundles. Natural Parkinson's support with precise dosage." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Bitter:wght@300;400&family=Hanken+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="MacuDopa home">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="21.5" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M24 9.5 C 33.5 15.5 33.5 32.5 24 38.5 C 14.5 32.5 14.5 15.5 24 9.5 Z" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="20.5" cy="20" r="2.4" fill="currentColor"/>
+          <circle cx="27.5" cy="28" r="2.4" fill="currentColor"/>
+        </svg>
+        <span class="brand-word">MacuDopa</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="shop.html" class="active">Shop</a>
+        <a href="faqs.html">FAQs</a>
+        <a href="our-story.html">Our story</a>
+      </nav>
+      <div class="header-actions">
+        <button class="header-icon" aria-label="Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+        </button>
+        <button class="header-icon cart-bubble" aria-label="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>
+          <span class="cart-count" data-cart-count>0</span>
+        </button>
+      </div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-backdrop" data-close></div>
+    <aside class="drawer-panel" role="dialog" aria-label="Menu">
+      <div class="drawer-top">
+        <span class="brand-word">MacuDopa</span>
+        <button class="drawer-close" data-close aria-label="Close menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <nav class="drawer-nav" aria-label="Mobile">
+        <a href="shop.html">Shop</a>
+        <a href="faqs.html">FAQs</a>
+        <a href="our-story.html">Our story</a>
+      </nav>
+      <div class="drawer-cta">
+        <a class="btn btn-orange" href="shop.html">Shop range</a>
+      </div>
+    </aside>
+  </div>
+
+  <main>
+
+    <section class="shop-banner">
+      <img src="assets/img/shop-banner.jpg" alt="MacuDopa capsules" />
+      <div class="scrim"></div>
+      <div class="container">
+        <div class="banner-copy">
+          <p class="sub accent">The range</p>
+          <h1 class="display" style="margin-top:14px">Day to night, precisely dosed.</h1>
+          <p class="body-copy">HPLC standardised Mucuna pruriens with added BF12. Choose your formula, or a bundle.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="shop-toolbar">
+          <div class="filter-chips" role="group" aria-label="Filter products">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="day">Day</button>
+            <button class="chip" data-filter="night">Night</button>
+            <button class="chip" data-filter="bundle">Bundles</button>
+          </div>
+          <div class="sort-control">
+            <label for="sort">Sort by</label>
+            <select id="sort">
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+
+          <article class="product-card" data-type="bundle" data-price="143.18">
+            <div class="product-visual pv-bundle">
+              <span class="badge">Best value</span>
+              <svg viewBox="0 0 120 200" fill="none" aria-hidden="true">
+                <ellipse cx="60" cy="190" rx="34" ry="6" fill="rgba(43,5,18,0.12)"/>
+                <rect x="42" y="26" width="36" height="30" rx="8" fill="#83B881"/>
+                <rect x="30" y="50" width="60" height="140" rx="18" fill="#fff" stroke="rgba(43,5,18,0.14)"/>
+                <rect x="36" y="84" width="48" height="76" rx="6" fill="#FBF5E3"/>
+                <text x="60" y="106" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="11" fill="#2B0512">MACUDOPA</text>
+                <text x="60" y="122" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="7.5" letter-spacing="1" fill="#FFA91F">PD BUNDLE</text>
+                <line x1="44" y1="132" x2="76" y2="132" stroke="rgba(43,5,18,0.2)"/>
+                <text x="60" y="146" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">DAY + NIGHT</text>
+                <text x="60" y="156" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">240 CAPSULES</text>
+              </svg>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title">Complete PD Bundle</h3>
+              <p class="product-meta">Day + Night. Full 24-hour programme.</p>
+              <div class="product-foot">
+                <span class="price">&pound;143.18</span>
+                <button class="add-cart">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-type="bundle" data-price="70.18">
+            <div class="product-visual pv-day">
+              <span class="badge">Starter</span>
+              <svg viewBox="0 0 120 200" fill="none" aria-hidden="true">
+                <ellipse cx="60" cy="190" rx="34" ry="6" fill="rgba(43,5,18,0.12)"/>
+                <rect x="42" y="26" width="36" height="30" rx="8" fill="#FFA91F"/>
+                <rect x="30" y="50" width="60" height="140" rx="18" fill="#fff" stroke="rgba(43,5,18,0.14)"/>
+                <rect x="36" y="84" width="48" height="76" rx="6" fill="#FBF5E3"/>
+                <text x="60" y="106" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="11" fill="#2B0512">MACUDOPA</text>
+                <text x="60" y="122" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="7.5" letter-spacing="1" fill="#FFA91F">STARTER PACK</text>
+                <line x1="44" y1="132" x2="76" y2="132" stroke="rgba(43,5,18,0.2)"/>
+                <text x="60" y="146" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">DAY + NIGHT</text>
+                <text x="60" y="156" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">STIMULATING DOSE</text>
+              </svg>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title">Day + Night Starter Pack</h3>
+              <p class="product-meta">A gentle, measured way to begin.</p>
+              <div class="product-foot">
+                <span class="price">&pound;70.18</span>
+                <button class="add-cart">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-type="day" data-price="35">
+            <div class="product-visual pv-day">
+              <svg viewBox="0 0 120 200" fill="none" aria-hidden="true">
+                <ellipse cx="60" cy="190" rx="34" ry="6" fill="rgba(43,5,18,0.12)"/>
+                <rect x="42" y="26" width="36" height="30" rx="8" fill="#FFA91F"/>
+                <rect x="30" y="50" width="60" height="140" rx="18" fill="#fff" stroke="rgba(43,5,18,0.14)"/>
+                <rect x="36" y="84" width="48" height="76" rx="6" fill="#FBF5E3"/>
+                <text x="60" y="106" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="11" fill="#2B0512">MACUDOPA</text>
+                <text x="60" y="122" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="7.5" letter-spacing="1" fill="#FFA91F">DAY</text>
+                <line x1="44" y1="132" x2="76" y2="132" stroke="rgba(43,5,18,0.2)"/>
+                <text x="60" y="146" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">HPLC STANDARDISED</text>
+                <text x="60" y="156" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">120 VEGAN CAPSULES</text>
+              </svg>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title">MacuDopa Day</h3>
+              <p class="product-meta">Improved formula. Normal release capsule.</p>
+              <div class="product-foot">
+                <span class="price">&pound;35.00</span>
+                <button class="add-cart">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-type="night" data-price="35">
+            <div class="product-visual pv-night">
+              <svg viewBox="0 0 120 200" fill="none" aria-hidden="true">
+                <ellipse cx="60" cy="190" rx="34" ry="6" fill="rgba(43,5,18,0.12)"/>
+                <rect x="42" y="26" width="36" height="30" rx="8" fill="#B46BA3"/>
+                <rect x="30" y="50" width="60" height="140" rx="18" fill="#fff" stroke="rgba(43,5,18,0.14)"/>
+                <rect x="36" y="84" width="48" height="76" rx="6" fill="#FBF5E3"/>
+                <text x="60" y="106" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="11" fill="#2B0512">MACUDOPA</text>
+                <text x="60" y="122" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="7.5" letter-spacing="1" fill="#B46BA3">NIGHT</text>
+                <line x1="44" y1="132" x2="76" y2="132" stroke="rgba(43,5,18,0.2)"/>
+                <text x="60" y="146" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">HPLC STANDARDISED</text>
+                <text x="60" y="156" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">120 VEGAN CAPSULES</text>
+              </svg>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title">MacuDopa Night</h3>
+              <p class="product-meta">Slow release capsule with BF12.</p>
+              <div class="product-foot">
+                <span class="price">&pound;35.00</span>
+                <button class="add-cart">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="newsletter">
+      <div class="container">
+        <div class="newsletter-box">
+          <div>
+            <p class="sub">Stay in the loop</p>
+            <h2 class="display" style="margin-top:14px">Sign up for the latest info and offers in your inbox.</h2>
+          </div>
+          <form aria-label="Newsletter signup" onsubmit="return false">
+            <input type="email" placeholder="Email address" aria-label="Email address" />
+            <button class="btn btn-primary" type="submit">Sign up</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand" style="gap:12px">
+            <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true" style="color:var(--precision-white)">
+              <circle cx="24" cy="24" r="21.5" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M24 9.5 C 33.5 15.5 33.5 32.5 24 38.5 C 14.5 32.5 14.5 15.5 24 9.5 Z" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="20.5" cy="20" r="2.4" fill="currentColor"/>
+              <circle cx="27.5" cy="28" r="2.4" fill="currentColor"/>
+            </svg>
+            <span class="brand-word">MacuDopa</span>
+          </div>
+          <p class="footer-tag">Parkinson's support, grown from nature and refined by science. Natural, precise, and practitioner guided.</p>
+          <div class="footer-socials">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.4"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="6.5" width="17" height="11" rx="3"/><path d="M10.5 9.8v4.4l4-2.2-4-2.2Z" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 5v11a4 4 0 1 1-4-4"/><path d="M14 7c.5 2 2 3.4 4 3.6"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>About</h4>
+          <ul>
+            <li><a href="our-story.html">Our story</a></li>
+            <li><a href="#">Store locator</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">The journal</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Help</h4>
+          <ul>
+            <li><a href="#">Your account</a></li>
+            <li><a href="#">Contact us</a></li>
+            <li><a href="faqs.html">FAQs</a></li>
+            <li><a href="#">Refund policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Stay in the loop</h4>
+          <p class="footer-tag" style="margin-bottom:16px">Sign up for all the latest info and offers in your inbox.</p>
+          <form aria-label="Newsletter signup" onsubmit="return false">
+            <input type="email" placeholder="Email address" style="background:transparent;border:1.5px solid rgba(251,245,227,0.3);color:var(--precision-white);padding:13px 20px;border-radius:999px;flex:1;min-width:0;font-family:var(--font-sans);font-size:0.9rem" />
+            <button class="btn btn-orange" type="submit" style="padding:13px 24px">Sign up</button>
+          </form>
+          <ul style="margin-top:22px">
+            <li><a href="#">Club MacuDopa</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 MacuDopa. All rights reserved.</span>
+        <div class="footer-legal">
+          <a href="#">Privacy policy</a>
+          <a href="#">Terms of service</a>
+          <a href="#">Cancellation policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

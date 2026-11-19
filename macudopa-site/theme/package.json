@@ -1,0 +1,13 @@
+{
+  "name": "macudopa-theme",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MacuDopa Shopify theme (OS 2.0 / Horizon-compatible). Mapped from the Mother London re-brand, buildable and publishable.",
+  "scripts": {
+    "dev": "shopify theme dev --store \"$SHOP_STORE\" --theme \"macudopa\"",
+    "publish": "shopify theme publish --store \"$SHOP_STORE\" --theme \"macudopa\"",
+    "check": "shopify theme check",
+    "pull": "shopify theme pull --store \"$SHOP_STORE\"",
+    "preview": "shopify theme preview --store \"$SHOP_STORE\""
+  }
+}

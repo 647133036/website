@@ -1,0 +1,60 @@
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      <div class="section-head">
+        <p class="sub">{{ section.settings.label }}</p>
+        <h2 class="display">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="support-cards">
+      {%- for block in section.blocks -%}
+        <div class="support-card {{ block.settings.tone }}" {{ block.id | escape }}>
+          <div class="card-glow"></div>
+          <p class="sub">{{ block.settings.eyebrow }}</p>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.body }}</p>
+        </div>
+        {% render 'section-spacing', block: block %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Support cards",
+  "tag": "section",
+  "class": "section-support",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Section label", "default": "Support that works with you every day" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "A targeted formula for your whole day, day to night." }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "max": 4,
+      "settings": [
+        { "type": "select", "id": "tone", "label": "Tone", "default": "day", "options": [
+          { "value": "day", "label": "Day (orange)" },
+          { "value": "night", "label": "Night (purple)" }
+        ]},
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Day formula" },
+        { "type": "text", "id": "title", "label": "Title", "default": "DAY" },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "A targeted formula to help you stay focused for what's ahead." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Support cards",
+      "blocks": [
+        { "type": "card", "settings": { "tone": "day", "eyebrow": "Day formula", "title": "DAY", "body": "A targeted formula to help you stay focused for what's ahead." } },
+        { "type": "card", "settings": { "tone": "night", "eyebrow": "Night formula", "title": "NIGHT", "body": "A calming blend to support relaxation, restful sleep and overnight recovery." } },
+        { "type": "card", "settings": { "tone": "day", "eyebrow": "Daily routine", "title": "ROUTINE", "body": "Take your next dose just before the last one fades. Keep dopamine steady, dose after dose." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

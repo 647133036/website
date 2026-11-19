@@ -1,0 +1,125 @@
+<header
+  class="site-header header--style-{{ section.settings.header_style }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="header__inner container" data-header>
+    <a class="brand" href="/" aria-label="{{ 'general.accessibility.home' | t }}">
+      {% render 'logo-mark', color: 'dark' %}
+      <span class="brand__word">{{ section.settings.logo_text }}</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Primary">
+      {%- if section.settings.show_navigation -%}
+        {%- for link in linklist[section.settings.nav_linklist].links -%}
+          <a
+            class="nav__link nav__link--{{ link.title | downcase | handleize }}"
+            href="{{ link.url }}"
+            {%- if section.settings.mega_menu and link.links.size > 0 -%}
+              data-mega
+            {%- endif -%}
+          >
+            {{ link.title }}
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
+    </nav>
+
+    <div class="header__actions">
+      <a class="icon-btn" href="/account" aria-label="{{ 'general.accessibility.alt_account' | t }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+      </a>
+      <button class="icon-btn cart-bubble" type="button" data-cart-count aria-label="{{ 'general.accessibility.alt_cart' | t }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>
+        <span class="cart-count" data-cart-count>{{ cart.item_count }}</span>
+      </button>
+    </div>
+
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-label="{{ 'general.accessibility.open_menu' | t }}" data-open-drawer>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+
+  <div class="drawer" id="drawer" data-drawer aria-hidden="true">
+    <div class="drawer-backdrop" data-close></div>
+    <aside class="drawer-panel" role="dialog" aria-label="{{ 'general.accessibility.menu' | t }}">
+      <div class="drawer-top">
+        <span class="brand__word">{{ section.settings.logo_text }}</span>
+        <button class="drawer-close" type="button" data-close aria-label="{{ 'general.accessibility.close_menu' | t }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <nav class="drawer-nav" aria-label="{{ 'general.accessibility.menu' | t }}">
+        {%- for link in linklist[section.settings.nav_linklist].links -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+      <div class="drawer-cta">
+        <a class="btn btn-orange" href="/collections/all">Shop range</a>
+      </div>
+    </aside>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "section",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "MacuDopa"
+    },
+    {
+      "type": "select",
+      "id": "nav_linklist",
+      "label": "Menu",
+      "default": "main-menu",
+      "options": [
+        { "value": "main-menu", "label": "Main menu" },
+        { "value": "footer-menu", "label": "Footer menu" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "header_style",
+      "label": "Header style",
+      "default": "cream",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "dark", "label": "Macuna Purple" },
+        { "value": "transparent", "label": "Transparent" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show navigation",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "mega_menu",
+      "label": "Enable mega menu",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Sticky header"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Sticky on scroll",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header"
+    }
+  ]
+}
+{% endschema %}

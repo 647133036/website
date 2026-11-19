@@ -1,0 +1,55 @@
+{%- comment -%}
+  Product card. Renders a bottle SVG variant based on product type (day/night/bundle)
+  and price/label. Used inside product-grid.
+  Pass: product, tone
+{%- endcomment -%}
+{%- assign tone = params.tone | default: 'day' -%}
+{%- assign is_bundle = product.metafields.mcp.is_bundle | default: false -%}
+{%- if is_bundle or product.title contains 'Bundle' or product.title contains 'Starter' -%}
+  {%- assign tone = 'bundle' -%}
+{%- endif -%}
+{%- if product.title contains 'Night' and tone != 'bundle' -%}
+  {%- assign tone = 'night' -%}
+{%- endif -%}
+{%- case tone -%}
+  {%- when 'night' -%}
+    {%- assign cap_fill = '#B46BA3' -%}
+    {%- assign formula_accent = '#B46BA3' -%}
+  {%- when 'bundle' -%}
+    {%- assign cap_fill = '#83B881' -%}
+    {%- assign formula_accent = '#FFA91F' -%}
+  {%- else -%}
+    {%- assign cap_fill = '#FFA91F' -%}
+    {%- assign formula_accent = '#FFA91F' -%}
+{%- endcase -%}
+{%- assign formula_label = product.metafields.mcp.formula | default: 'DAY' -%}
+
+<article class="product-card" data-type="{{ product.metafields.mcp.category | default: 'day' }}" data-price="{{ product.price_amount }}">
+  <div class="product-visual pv-{{ tone }}">
+    {%- if product.metafields.mcp.badge != blank -%}
+      <span class="badge">{{ product.metafields.mcp.badge }}</span>
+    {%- endif -%}
+    <svg viewBox="0 0 120 200" fill="none" aria-hidden="true" focusable="false">
+      <ellipse cx="60" cy="190" rx="34" ry="6" fill="rgba(43,5,18,0.12)"/>
+      <rect x="42" y="26" width="36" height="30" rx="8" fill="{{ cap_fill }}"/>
+      <rect x="30" y="50" width="60" height="140" rx="18" fill="#fff" stroke="rgba(43,5,18,0.14)"/>
+      <rect x="36" y="84" width="48" height="76" rx="6" fill="#FBF5E3"/>
+      <text x="60" y="106" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="11" fill="#2B0512">MACUDOPA</text>
+      <text x="60" y="122" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="7.5" letter-spacing="1" fill="{{ formula_accent }}">{{ formula_label }}</text>
+      <line x1="44" y1="132" x2="76" y2="132" stroke="rgba(43,5,18,0.2)"/>
+      <text x="60" y="146" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">{{ product.metafields.mcp.line_one | default: 'HPLC standardised' }}</text>
+      <text x="60" y="156" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="6.5" fill="rgba(43,5,18,0.55)">{{ product.metafields.mcp.line_two | default: '120 vegan capsules' }}</text>
+    </svg>
+  </div>
+  <div class="product-info">
+    <h3 class="product-title">{{ product.title }}</h3>
+    <p class="product-meta">{{ product.metafields.mcp.meta | default: product.description | strip_html | truncate: 60 }}</p>
+    <div class="product-foot">
+      <span class="price">{{ product.price | money }}</span>
+      <form action="/cart/add" method="post">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button class="add-cart" type="submit">Add to cart</button>
+      </form>
+    </div>
+  </div>
+</article>
