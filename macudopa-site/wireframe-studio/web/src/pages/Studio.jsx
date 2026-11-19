@@ -1,24 +1,27 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { sectionMeta, SECTIONS } from '../lib/sections.js';
 import { useAuth, can } from '../auth.jsx';
 import { Toast } from '../components/ui.jsx';
+import { ProductGrid, ProductPage } from '../components/shop.jsx';
 
-function BlockPreview({ block }) {
+function BlockPreview({ block, onOpenProduct }) {
   const meta = sectionMeta(block.section);
+  let content = <div className="bf-box"><div>{block.label || meta.desc}</div><div style={{ marginTop: 4, fontSize: 11 }}>wireframe placeholder</div></div>;
+  if (block.section === 'product-grid') content = <div className="bf-live"><ProductGrid /></div>;
+  if (block.section === 'product-page') content = <div className="bf-live"><ProductPage id="macudopa-day" onBack={onOpenProduct} /></div>;
   return (
     <div className={`block-frame ${block.visible ? '' : 'hidden'}`}>
       <div className="bf-tag">{meta.label} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {block.section}</span></div>
-      <div className="bf-box">
-        <div>{block.label || meta.desc}</div>
-        <div style={{ marginTop: 4, fontSize: 11 }}>wireframe placeholder</div>
-      </div>
+      {content}
     </div>
   );
 }
 
 export function StudioPage() {
   const { role } = useAuth();
+  const nav = useNavigate();
   const editable = can(role, 'editor');
   const isAdmin = role === 'admin';
 
@@ -178,7 +181,7 @@ export function StudioPage() {
             <div className="preview">
               <div className={`device ${frame === '390' ? 'm' : 'd'}`}>
                 <div className="screen">
-                  {blocks.map((b) => <BlockPreview key={b.id} block={b} />)}
+                  {blocks.map((b) => <BlockPreview key={b.id} block={b} onOpenProduct={() => nav('/shop')} />)}
                   {blocks.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--muted)' }}>Empty frame</div>}
                 </div>
               </div>

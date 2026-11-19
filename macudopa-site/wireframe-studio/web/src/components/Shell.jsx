@@ -1,8 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
+import { useCart } from '../lib/cart.jsx';
+import { CartDrawer } from './shop.jsx';
 
 export function StudioShell({ children }) {
   const { user, role, logout } = useAuth();
+  const { count, setOpen } = useCart();
   const nav = useNavigate();
   const doLogout = () => { logout(); nav('/login'); };
   const initials = (user?.name || '?').slice(0, 1).toUpperCase();
@@ -13,10 +16,15 @@ export function StudioShell({ children }) {
         <nav>
           <NavLink to="/studio" className={({ isActive }) => (isActive ? 'active' : '')}>Studio</NavLink>
           <NavLink to="/preview" className={({ isActive }) => (isActive ? 'active' : '')}>Preview</NavLink>
+          <NavLink to="/shop" className={({ isActive }) => (isActive ? 'active' : '')}>Shop</NavLink>
           {role === 'admin' && <NavLink to="/groups" className={({ isActive }) => (isActive ? 'active' : '')}>Groups</NavLink>}
           {role === 'admin' && <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>}
         </nav>
         <div className="spacer" />
+        <button className="cart-btn" onClick={() => setOpen(true)} title="Cart">
+          <span>Cart</span>
+          <span className="cart-count">{count}</span>
+        </button>
         <div className="user-chip">
           <span className="avatar">{initials}</span>
           <div style={{ lineHeight: 1.1 }}>
@@ -28,6 +36,7 @@ export function StudioShell({ children }) {
         </div>
       </div>
       <div className="main">{children}</div>
+      <CartDrawer />
     </div>
   );
 }

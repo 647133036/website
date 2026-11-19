@@ -6,6 +6,7 @@ import { StudioPage } from './pages/Studio.jsx';
 import { UsersPage } from './pages/Users.jsx';
 import { GroupsPage } from './pages/Groups.jsx';
 import { PreviewPage } from './pages/Preview.jsx';
+import { ShopPage, ProductDetailPage } from './pages/Shop.jsx';
 import { Spinner, Guard } from './components/ui.jsx';
 
 export default function App() {
@@ -28,6 +29,9 @@ export default function App() {
         <Route path="/" element={<Navigate to="/studio" replace />} />
         <Route path="/studio" element={<StudioPage />} />
         <Route path="/preview" element={<PreviewPage />} />
+        <Route path="/shop" element={<ShopPage />} />
+        <Route path="/product" element={<Navigate to="/shop" replace />} />
+        <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/users" element={<Guard need="admin"><UsersPage /></Guard>} />
         <Route path="/groups" element={<Guard need="admin"><GroupsPage /></Guard>} />
       </Routes>
