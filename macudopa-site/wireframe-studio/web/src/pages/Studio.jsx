@@ -4,19 +4,26 @@ import { api } from '../lib/api.js';
 import { sectionMeta, SECTIONS } from '../lib/sections.js';
 import { useAuth, can } from '../auth.jsx';
 import { Toast } from '../components/ui.jsx';
-import { ProductGrid, ProductPage } from '../components/shop.jsx';
+import { ShopView, ProductPage } from '../components/shop.jsx';
 
 function BlockPreview({ block, onOpenProduct }) {
   const meta = sectionMeta(block.section);
   let content = <div className="bf-box"><div>{block.label || meta.desc}</div><div style={{ marginTop: 4, fontSize: 11 }}>wireframe placeholder</div></div>;
-  if (block.section === 'product-grid') content = <div className="bf-live"><ProductGrid /></div>;
-  if (block.section === 'product-page') content = <div className="bf-live"><ProductPage id="macudopa-day" onBack={onOpenProduct} /></div>;
+  if (block.section === 'product-grid') content = <div className="bf-live"><ShopView onOpenProduct={onOpenProduct} /></div>;
+  if (block.section === 'product-page') content = <div className="bf-live"><PDPBlock onOpenProduct={onOpenProduct} /></div>;
   return (
     <div className={`block-frame ${block.visible ? '' : 'hidden'}`}>
       <div className="bf-tag">{meta.label} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {block.section}</span></div>
       {content}
     </div>
   );
+}
+
+function PDPBlock({ onOpenProduct }) {
+  const [p, setP] = useState(null);
+  useEffect(() => { api('/products/macudopa-day').then(setP).catch(() => setP(null)); }, []);
+  if (!p) return <div className="bf-box">loading…</div>;
+  return <ProductPage product={p} onBack={onOpenProduct} />;
 }
 
 export function StudioPage() {

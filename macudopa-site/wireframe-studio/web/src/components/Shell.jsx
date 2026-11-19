@@ -17,6 +17,8 @@ export function StudioShell({ children }) {
           <NavLink to="/studio" className={({ isActive }) => (isActive ? 'active' : '')}>Studio</NavLink>
           <NavLink to="/preview" className={({ isActive }) => (isActive ? 'active' : '')}>Preview</NavLink>
           <NavLink to="/shop" className={({ isActive }) => (isActive ? 'active' : '')}>Shop</NavLink>
+          {role === 'admin' && <NavLink to="/orders" className={({ isActive }) => (isActive ? 'active' : '')}>Orders</NavLink>}
+          {role === 'admin' && <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>Products</NavLink>}
           {role === 'admin' && <NavLink to="/groups" className={({ isActive }) => (isActive ? 'active' : '')}>Groups</NavLink>}
           {role === 'admin' && <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>}
         </nav>

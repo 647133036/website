@@ -52,6 +52,40 @@ function migrate() {
     );
 
     CREATE INDEX IF NOT EXISTS idx_blocks_page_frame ON wireframe_blocks(page_slug, frame, order_idx);
+
+    CREATE TABLE IF NOT EXISTS products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      price REAL NOT NULL,
+      compare_price REAL,
+      category TEXT DEFAULT '',
+      tone TEXT DEFAULT 'orange',
+      formula TEXT DEFAULT '',
+      meta TEXT DEFAULT '',
+      badge TEXT,
+      description TEXT DEFAULT '',
+      stock INTEGER NOT NULL DEFAULT 100,
+      active INTEGER NOT NULL DEFAULT 1,
+      variants_json TEXT NOT NULL DEFAULT ('[]'),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ref TEXT NOT NULL UNIQUE,
+      user_id INTEGER,
+      status TEXT NOT NULL DEFAULT 'paid',
+      subtotal REAL NOT NULL,
+      shipping REAL NOT NULL DEFAULT 0,
+      total REAL NOT NULL,
+      line_items_json TEXT NOT NULL DEFAULT ('[]'),
+      payment_json TEXT NOT NULL DEFAULT ('{}'),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
   `);
 }
 

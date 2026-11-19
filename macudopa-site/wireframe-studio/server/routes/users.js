@@ -12,10 +12,8 @@ function publicUser(u) {
   };
 }
 
-router.use(requireAuth);
-
 // ---- user groups ----
-router.get('/groups', (req, res) => {
+router.get('/groups', requireAuth, (req, res) => {
   const rows = db.prepare(`
     SELECT g.id, g.name, g.role, g.description, COUNT(u.id) AS members
     FROM user_groups g LEFT JOIN users u ON u.group_id = g.id
@@ -53,7 +51,7 @@ router.delete('/groups/:id', requireRole('admin'), (req, res) => {
 });
 
 // ---- users ----
-router.get('/users', (req, res) => {
+router.get('/users', requireAuth, (req, res) => {
   const rows = db.prepare(`
     SELECT u.id, u.email, u.name, u.group_id, u.created_at, g.name AS group_name, g.role AS role
     FROM users u LEFT JOIN user_groups g ON g.id = u.group_id ORDER BY u.name

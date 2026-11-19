@@ -168,3 +168,21 @@ button { font-family: inherit; cursor: pointer; }
 .qty { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; }
 .drawer-foot { border-top: 1px solid var(--line); padding: 16px 18px; }
 .link { background: none; border: 0; cursor: pointer; }
+
+/* ---- shop view (backend-driven) ---- */
+.shop-view { margin-top: 8px; }
+.shop-toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.shop-toolbar input, .shop-toolbar select { border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px; font-size: 14px; }
+.shop-toolbar input { flex: 1; min-width: 180px; }
+.pdp-desc { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 10px 0; }
+.pdp-stock { font-size: 13px; font-weight: 700; color: var(--green); margin: 8px 0; }
+.pdp-stock:has(+ .btn:disabled) { color: #b00; }
+
+/* checkout */
+.checkout { padding: 16px 18px; }
+.checkout .field { margin-bottom: 10px; }
+.drawer-body-scroll { flex: 1; overflow-y: auto; }
+.err { color: #b00; font-size: 13px; min-height: 16px; margin: 6px 0; }
+
+/* orders admin */
+.card .sub.light { color: var(--muted); }

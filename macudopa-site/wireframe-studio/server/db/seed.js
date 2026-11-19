@@ -1,10 +1,74 @@
 const db = require('./index');
 const { hashPassword } = require('../config/auth');
 
+const PRODUCTS = [
+  {
+    slug: 'bundle-pd', name: 'Complete PD Bundle', price: 143.18, compare_price: null,
+    category: 'bundle', tone: 'green', formula: 'Mucuna pruriens HPLC std + BF12',
+    meta: 'Day + Night + Routine, 60-day supply', badge: 'Best value', stock: 25,
+    description: 'Our full on-and-on range: MacuDopa Day, Night and the Routine program, sized for a 60-day supply. The most complete way to keep dopamine steady across the whole day.',
+    variants: [
+      { id: 'single', label: 'One-off', delta: 0 },
+      { id: 'sub', label: 'Subscribe & save', delta: -10, note: 'Save £10 + free shipping' }
+    ]
+  },
+  {
+    slug: 'starter', name: 'Day + Night Starter Pack', price: 70.18, compare_price: 70,
+    category: 'bundle', tone: 'green', formula: 'Mucuna pruriens HPLC std + BF12',
+    meta: 'Start your on-and-on routine', badge: 'New', stock: 60,
+    description: 'Begin the MacuDopa method with the Day and Night pair. Smooths the morning off-period and supports daytime control in one pack.',
+    variants: [
+      { id: 'single', label: 'One-off', delta: 0 },
+      { id: 'sub', label: 'Subscribe & save', delta: -5, note: 'Free shipping' }
+    ]
+  },
+  {
+    slug: 'macudopa-day', name: 'MacuDopa Day', price: 35.0, compare_price: null,
+    category: 'day', tone: 'orange', formula: 'Mucuna pruriens HPLC std + BF12',
+    meta: 'Daytime, fast-acting dopaminergic support', badge: null, stock: 120,
+    description: 'Fast-acting daytime support built on L-DOPA from Mucuna pruriens. Take it just before your last dose fades to keep you on for longer.',
+    variants: [
+      { id: '30', label: '30 capsules', delta: 0 },
+      { id: '60', label: '60 capsules', delta: 20 },
+      { id: 'sub', label: 'Subscribe & save', delta: -4, note: '10% off + free shipping' }
+    ]
+  },
+  {
+    slug: 'macudopa-night', name: 'MacuDopa Night', price: 35.0, compare_price: null,
+    category: 'night', tone: 'purple', formula: 'Mucuna pruriens HPLC std + BF12',
+    meta: 'Overnight, smooths the morning off-period', badge: 'Coming soon', stock: 0,
+    description: 'Overnight formula that bridges the pre-dawn dip so you wake up on, not off. Part of the MacuDopa Continuum Method.',
+    variants: [
+      { id: '30', label: '30 capsules', delta: 0 },
+      { id: '60', label: '60 capsules', delta: 20 },
+      { id: 'sub', label: 'Subscribe & save', delta: -4, note: '10% off + free shipping' }
+    ]
+  }
+];
+
+function seedProducts() {
+  const n = db.prepare('SELECT COUNT(*) AS n FROM products').get().n;
+  if (n > 0) return n;
+  const ins = db.prepare(`
+    INSERT INTO products (slug, name, price, compare_price, category, tone, formula, meta, badge, description, stock, active, variants_json)
+    VALUES (@slug, @name, @price, @compare_price, @category, @tone, @formula, @meta, @badge, @description, @stock, 1, @variants_json)
+  `);
+  for (const p of PRODUCTS) {
+    ins.run({
+      slug: p.slug, name: p.name, price: p.price, compare_price: p.compare_price,
+      category: p.category, tone: p.tone, formula: p.formula, meta: p.meta,
+      badge: p.badge, description: p.description, stock: p.stock,
+      variants_json: JSON.stringify(p.variants)
+    });
+  }
+  return db.prepare('SELECT COUNT(*) AS n FROM products').get().n;
+}
+
 function seed() {
   const count = db.prepare('SELECT COUNT(*) AS n FROM users').get().n;
   if (count > 0) {
-    console.log('DB already seeded, skipping.');
+    const seeded = seedProducts();
+    console.log('Users already seeded; products now =', seeded);
     return;
   }
 
@@ -82,7 +146,9 @@ function seed() {
     }
   }
 
-  console.log('Seeded: groups=%d users=%d pages=%d blocks=%d', groups.length, users.length, pages.length, sectionMap && 0);
+  const pCount = seedProducts();
+
+  console.log('Seeded: groups=%d users=%d pages=%d products=%d', groups.length, users.length, pages.length, pCount);
   console.log('Login seeds: admin@macudopa.com / admin123  |  design@macudopa.com / design123  |  view@macudopa.com / view123');
 }
 

@@ -28,11 +28,13 @@ function requireAuth(req, res, next) {
 const ROLE_RANK = { viewer: 1, editor: 2, admin: 3 };
 function requireRole(minRole) {
   return (req, res, next) => {
-    if (!req.user) return res.status(401).json({ error: 'Authentication required' });
-    const have = ROLE_RANK[req.user.role] || 0;
-    const need = ROLE_RANK[minRole] || 1;
-    if (have < need) return res.status(403).json({ error: `Requires ${minRole} role` });
-    next();
+    attachUser(req, res, (err) => {
+      if (err) return res.status(401).json({ error: err.message === 'no-token' ? 'Authentication required' : 'Invalid or expired token' });
+      const have = ROLE_RANK[req.user.role] || 0;
+      const need = ROLE_RANK[minRole] || 1;
+      if (have < need) return res.status(403).json({ error: `Requires ${minRole} role` });
+      next();
+    });
   };
 }
 
