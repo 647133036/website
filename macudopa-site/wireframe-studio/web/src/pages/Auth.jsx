@@ -15,7 +15,7 @@ export function LoginPage() {
   const [busy, setBusy] = useState(false);
   const submit = async (e) => {
     e.preventDefault(); setErr(''); setBusy(true);
-    try { await login(email, password); }
+    try { await login(email, password); nav('/', { replace: true }); }
     catch (x) { setErr(x.message); }
     finally { setBusy(false); }
   };
@@ -44,7 +44,7 @@ export function RegisterPage() {
   const [busy, setBusy] = useState(false);
   const submit = async (e) => {
     e.preventDefault(); setErr(''); setBusy(true);
-    try { await register(name, email, password); }
+    try { await register(name, email, password); nav('/', { replace: true }); }
     catch (x) { setErr(x.message); }
     finally { setBusy(false); }
   };

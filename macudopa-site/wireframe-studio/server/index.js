@@ -3,8 +3,12 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+app.use(cors({ origin: true, credentials: true }));
+
+// Accept both JSON and URL-encoded bodies (URL-encoded keeps browser requests
+// "simple" so the preview gateway doesn't drop their bodies / force a preflight).
+app.use(express.json({ type: ['application/json', 'text/plain'] }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
 

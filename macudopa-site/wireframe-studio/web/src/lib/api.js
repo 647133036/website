@@ -23,8 +23,8 @@ async function refreshTokens() {
       if (!refreshToken) throw new Error('no-refresh');
       const r = await fetch(`${API}/auth/refresh`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken })
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ refreshToken }).toString()
       });
       if (!r.ok) throw new Error('refresh-failed');
       const j = await r.json();
@@ -36,9 +36,31 @@ async function refreshTokens() {
   return refreshing;
 }
 
+function toForm(obj) {
+  const out = [];
+  const walk = (o, prefix) => {
+    for (const [k, v] of Object.entries(o)) {
+      const key = prefix ? `${prefix}[${k}]` : k;
+      if (v === null || v === undefined) continue;
+      if (Array.isArray(v)) {
+        if (v.length === 0) out.push(`${key}[]=`);
+        v.forEach((item, i) => (Array.isArray(item) || (item && typeof item === 'object')) ? walk(item, `${key}[${i}]`) : out.push(`${encodeURIComponent(`${key}[${i}]`)}=${encodeURIComponent(item)}`));
+      } else if (typeof v === 'object') walk(v, key);
+      else out.push(`${encodeURIComponent(key)}=${encodeURIComponent(v)}`);
+    }
+  };
+  walk(obj, '');
+  return out.join('&');
+}
+
 export async function api(path, { method = 'GET', body, auth = true } = {}) {
   const opts = { method, headers: {} };
-  if (body !== undefined) opts.headers['Content-Type'] = 'application/json';
+  // URL-encoded bodies are "simple requests" (no CORS preflight) and survive
+  // the preview gateway, unlike JSON payloads whose preflight lacks ACAO.
+  if (body !== undefined) {
+    opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    opts.body = toForm(body);
+  }
   if (auth) {
     const t = getTokens();
     if (t.accessToken) opts.headers['Authorization'] = `Bearer ${t.accessToken}`;
