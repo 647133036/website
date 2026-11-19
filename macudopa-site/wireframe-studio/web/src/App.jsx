@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
-import { AuthShell } from './pages/Auth.jsx';
+import { LoginPage, RegisterPage } from './pages/Auth.jsx';
 import { StudioShell } from './components/Shell.jsx';
 import { StudioPage } from './pages/Studio.jsx';
 import { UsersPage } from './pages/Users.jsx';
@@ -13,11 +13,13 @@ export default function App() {
   if (loading) return <Spinner />;
   if (!user) {
     return (
-      <AuthShell>
+      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/*" element={<Navigate to="/login" replace />} />
         </Routes>
-      </AuthShell>
+      </div>
     );
   }
   return (

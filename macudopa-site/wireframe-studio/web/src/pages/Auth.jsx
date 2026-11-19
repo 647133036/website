@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 
 function Card({ children }) {
   return <div className="auth"><div className="logo" style={{ fontSize: 22, fontWeight: 800, color: 'var(--purple)' }}><span style={{ display: 'inline-block', width: 22, height: 30, background: 'var(--orange)', borderRadius: '50% 50% 50% 50%/58% 58% 42% 42%', verticalAlign: 'middle', marginRight: 8 }} />MacuDopa</div>{children}</div>;
 }
 
-function Login() {
+export function LoginPage() {
   const { login } = useAuth();
   const nav = useNavigate();
   const [email, setEmail] = useState('admin@macudopa.com');
@@ -34,7 +34,7 @@ function Login() {
   );
 }
 
-function Register() {
+export function RegisterPage() {
   const { register } = useAuth();
   const nav = useNavigate();
   const [name, setName] = useState('');
@@ -64,14 +64,3 @@ function Register() {
   );
 }
 
-export function AuthShell({ children }) {
-  return (
-    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </div>
-  );
-}
