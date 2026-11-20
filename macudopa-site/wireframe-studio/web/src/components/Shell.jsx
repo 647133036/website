@@ -14,13 +14,22 @@ export function StudioShell({ children }) {
       <div className="topbar">
         <div className="logo"><span className="pod" /> MacuDopa <span style={{ fontWeight: 400, opacity: .8, fontSize: 13, marginLeft: 2 }}>Wireframe Studio</span></div>
         <nav>
-          <NavLink to="/studio" className={({ isActive }) => (isActive ? 'active' : '')}>Studio</NavLink>
-          <NavLink to="/preview" className={({ isActive }) => (isActive ? 'active' : '')}>Preview</NavLink>
-          <NavLink to="/shop" className={({ isActive }) => (isActive ? 'active' : '')}>Shop</NavLink>
-          {role === 'admin' && <NavLink to="/orders" className={({ isActive }) => (isActive ? 'active' : '')}>Orders</NavLink>}
-          {role === 'admin' && <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>Products</NavLink>}
-          {role === 'admin' && <NavLink to="/groups" className={({ isActive }) => (isActive ? 'active' : '')}>Groups</NavLink>}
-          {role === 'admin' && <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>}
+          {role === 'admin' ? (
+            <>
+              <NavLink to="/studio" className={({ isActive }) => (isActive ? 'active' : '')}>Studio</NavLink>
+              <NavLink to="/preview" className={({ isActive }) => (isActive ? 'active' : '')}>Preview</NavLink>
+              <NavLink to="/shop" className={({ isActive }) => (isActive ? 'active' : '')}>Shop</NavLink>
+              <NavLink to="/orders" className={({ isActive }) => (isActive ? 'active' : '')}>Orders</NavLink>
+              <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>Products</NavLink>
+              <NavLink to="/groups" className={({ isActive }) => (isActive ? 'active' : '')}>Groups</NavLink>
+              <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink to="/shop" className={({ isActive }) => (isActive ? 'active' : '')}>Shop</NavLink>
+              <NavLink to="/my-orders" className={({ isActive }) => (isActive ? 'active' : '')}>My orders</NavLink>
+            </>
+          )}
         </nav>
         <div className="spacer" />
         <button className="cart-btn" onClick={() => setOpen(true)} title="Cart">

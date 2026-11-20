@@ -7,15 +7,15 @@ function Card({ children }) {
 }
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, role } = useAuth();
   const nav = useNavigate();
-  const [email, setEmail] = useState('admin@macudopa.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const submit = async (e) => {
     e.preventDefault(); setErr(''); setBusy(true);
-    try { await login(email, password); nav('/', { replace: true }); }
+    try { await login(email, password); nav(role === 'admin' ? '/studio' : '/shop', { replace: true }); }
     catch (x) { setErr(x.message); }
     finally { setBusy(false); }
   };
@@ -29,6 +29,10 @@ export function LoginPage() {
         <div className="err">{err}</div>
         <button className="btn primary" style={{ width: '100%' }} disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
       </form>
+      <div className="hint" style={{ marginTop: 14, fontSize: 13, lineHeight: 1.5, color: 'var(--muted)', textAlign: 'center' }}>
+        Just want to shop? <b>Register a free account</b> — every new account can browse and buy.<br />
+        Demo: <code>view@macudopa.com</code> / <code>view123</code>
+      </div>
       <div className="toggle">No account? <a onClick={() => nav('/register')}>Register</a></div>
     </Card>
   );
@@ -44,7 +48,7 @@ export function RegisterPage() {
   const [busy, setBusy] = useState(false);
   const submit = async (e) => {
     e.preventDefault(); setErr(''); setBusy(true);
-    try { await register(name, email, password); nav('/', { replace: true }); }
+    try { await register(name, email, password); nav('/shop', { replace: true }); }
     catch (x) { setErr(x.message); }
     finally { setBusy(false); }
   };
