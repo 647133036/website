@@ -80,6 +80,12 @@ router.get('/', requireAuth, (req, res) => {
   res.json(rows.map(oOut));
 });
 
+// Mine: current user's own orders only (works for every role, incl. admin)
+router.get('/mine', requireAuth, (req, res) => {
+  const rows = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC').all(req.user.id);
+  res.json(rows.map(oOut));
+});
+
 router.get('/stats', requireAuth, requireRole('admin'), (req, res) => {
   const s = db.prepare("SELECT COUNT(*) AS orders, COALESCE(SUM(total),0) AS revenue, COALESCE(SUM(subtotal),0) AS subtotal FROM orders WHERE status = 'paid'").get();
   const recent = db.prepare('SELECT * FROM orders ORDER BY id DESC LIMIT 8').all().map(oOut);

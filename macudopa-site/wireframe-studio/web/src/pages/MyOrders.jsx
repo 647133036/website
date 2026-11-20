@@ -6,7 +6,7 @@ const STATUSES = { paid: 'Paid', pending: 'Pending', declined: 'Declined' };
 export function MyOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [open, setOpen] = useState(null);
-  useEffect(() => { (async () => { try { setOrders(await api('/orders')); } catch (e) { /* noop */ } })(); }, []);
+  useEffect(() => { (async () => { try { setOrders(await api('/orders/mine')); } catch (e) { /* noop */ } })(); }, []);
 
   const exportCsv = () => {
     const rows = orders.map((o) => o.items.map((it) => ({ ref: o.ref, item: it.name, variant: it.variantLabel || it.variant, qty: it.qty, unit: it.unitPrice, status: o.status, total: o.total, date: o.createdAt })));
