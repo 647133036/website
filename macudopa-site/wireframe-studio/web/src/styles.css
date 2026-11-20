@@ -142,7 +142,30 @@ button { font-family: inherit; cursor: pointer; }
 .pdp { margin-top: 16px; }
 .pdp-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 14px; }
 @media (max-width: 700px) { .pdp-grid { grid-template-columns: 1fr; } }
-.pdp-media { border-radius: 14px; min-height: 300px; display: grid; place-items: center; padding: 20px; border: 1px solid var(--line); }
+.pdp-media { border-radius: 14px; min-height: 300px; display: grid; place-items: center; padding: 20px; border: 1px solid var(--line); position: relative; overflow: hidden; }
+.pdp-media img { width: 100%; height: 100%; object-fit: contain; }
+.pdp-media-wrap { display: flex; flex-direction: column; gap: 10px; }
+.pdp-thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+.pdp-thumb { width: 56px; height: 56px; border-radius: 9px; overflow: hidden; border: 2px solid var(--line); padding: 0; cursor: pointer; background: #faf7f0; }
+.pdp-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.pdp-thumb.on { border-color: var(--orange); }
+.pdp-detail { margin-top: 28px; display: flex; flex-direction: column; gap: 18px; }
+.db-banner { margin: 0; }
+.db-banner img { width: 100%; border-radius: 14px; display: block; max-height: 320px; object-fit: cover; }
+.db-banner figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; text-align: center; }
+.db-block h3 { font-size: 17px; font-weight: 800; color: var(--purple); margin: 0 0 8px; }
+.db-block p, .db-block li { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.db-block ul { margin: 0; padding-left: 18px; }
+.db-block li { margin: 4px 0; }
+.db-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+@media (max-width: 700px) { .db-grid { grid-template-columns: 1fr; } }
+.db-grid-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #faf7f0; }
+.db-grid-card b { display: block; color: var(--ink); font-size: 14px; margin-bottom: 4px; }
+.db-guarantee { border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 10px; padding: 14px 16px; background: #f2faf3; }
+.db-guarantee b { color: var(--ink); }
+.db-guarantee p { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+.db-gallery { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.db-gallery img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
 .pdp-price { font-size: 26px; font-weight: 800; margin: 6px 0; }
 .pdp-variants { margin-top: 14px; }
 .radio-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }

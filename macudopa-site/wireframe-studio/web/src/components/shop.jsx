@@ -42,7 +42,11 @@ export function ProductCard({ product, onOpen }) {
     <div className="pcard" onClick={() => open(product)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && open(product)}>
       <div className="pcard-media" style={{ background: TONE[product.tone]?.[1] || '#eee' }}>
         {product.badge && <span className="pcard-badge">{product.badge}</span>}
-        <BottleSVG tone={product.tone} />
+        {product.gallery?.[0] ? (
+          <img src={product.gallery[0]} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} onError={(e) => e.target.style.display = 'none'} />
+        ) : (
+          <BottleSVG tone={product.tone} />
+        )}
       </div>
       <div className="pcard-body">
         <div className="pcard-title">{product.name}</div>
@@ -74,17 +78,35 @@ export function ProductPage({ product, onBack }) {
   const { add } = useCart();
   const [variant, setVariant] = useState(product.variants[0]?.id);
   const [added, setAdded] = useState(false);
+  const [activeImg, setActiveImg] = useState(0);
   const v = product.variants.find((x) => x.id === variant);
   const price = Number(product.price) + (v?.delta || 0);
+  const gallery = product.gallery && product.gallery.length ? product.gallery : [];
+  const detail = product.detail && product.detail.length ? product.detail : [];
   return (
     <div className="pdp">
       <button className="btn ghost sm" onClick={onBack}>← Back to shop</button>
       <div className="pdp-grid">
-        <div className="pdp-media" style={{ background: TONE[product.tone]?.[1] || '#eee' }}>
-          <BottleSVG tone={product.tone} />
+        <div className="pdp-media-wrap">
+          <div className="pdp-media" style={{ background: TONE[product.tone]?.[1] || '#eee' }}>
+            {gallery.length ? (
+              <img src={gallery[activeImg]} alt={product.name} onError={(e) => { e.target.style.display = 'none'; }} />
+            ) : (
+              <BottleSVG tone={product.tone} />
+            )}
+            {product.badge && <span className="pcard-badge">{product.badge}</span>}
+          </div>
+          {gallery.length > 1 && (
+            <div className="pdp-thumbs">
+              {gallery.map((src, i) => (
+                <button key={i} className={`pdp-thumb ${i === activeImg ? 'on' : ''}`} onClick={() => setActiveImg(i)}>
+                  <img src={src} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="pdp-info">
-          {product.badge && <span className="pcard-badge">{product.badge}</span>}
           <div className="pcard-title" style={{ fontSize: 24, marginTop: 6 }}>{product.name}</div>
           <div className="pdp-price">£{price.toFixed(2)}</div>
           <div className="pcard-meta">{product.meta} · {product.formula}</div>
@@ -108,6 +130,70 @@ export function ProductPage({ product, onBack }) {
           <div className="pcard-meta" style={{ marginTop: 10, fontSize: 12 }}>30-day money-back guarantee · Practitioner-guided</div>
         </div>
       </div>
+      {detail.length > 0 && <DetailBlocks detail={detail} />}
+    </div>
+  );
+}
+
+function DetailBlocks({ detail }) {
+  return (
+    <div className="pdp-detail">
+      {detail.map((b, i) => {
+        switch (b.type) {
+          case 'banner':
+            return (
+              <figure key={i} className="db-banner">
+                <img src={b.image} alt={b.caption || ''} onError={(e) => e.target.style.display = 'none'} />
+                {b.caption && <figcaption>{b.caption}</figcaption>}
+              </figure>
+            );
+          case 'headline':
+            return (
+              <section key={i} className="db-block">
+                <h3>{b.title}</h3>
+                <p>{b.body}</p>
+              </section>
+            );
+          case 'list':
+            return (
+              <section key={i} className="db-block">
+                <h3>{b.title}</h3>
+                <ul>{(b.items || []).map((t, j) => <li key={j}>{t}</li>)}</ul>
+              </section>
+            );
+          case 'grid':
+            return (
+              <section key={i} className="db-block">
+                <h3>{b.title}</h3>
+                <div className="db-grid">
+                  {(b.items || []).map((it, j) => (
+                    <div className="db-grid-card" key={j}><b>{it.title}</b><p>{it.body}</p></div>
+                  ))}
+                </div>
+              </section>
+            );
+          case 'guarantee':
+            return (
+              <section key={i} className="db-guarantee">
+                <b>{b.title}</b>
+                <p>{b.body}</p>
+              </section>
+            );
+          case 'gallery':
+            return (
+              <section key={i} className="db-block">
+                <h3>{b.title}</h3>
+                <div className="db-gallery">
+                  {(b.images || []).map((src, j) => (
+                    <img key={j} src={src} alt="" onError={(e) => e.target.style.display = 'none'} />
+                  ))}
+                </div>
+              </section>
+            );
+          default:
+            return null;
+        }
+      })}
     </div>
   );
 }

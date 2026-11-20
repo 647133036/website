@@ -68,6 +68,8 @@ function migrate() {
       stock INTEGER NOT NULL DEFAULT 100,
       active INTEGER NOT NULL DEFAULT 1,
       variants_json TEXT NOT NULL DEFAULT ('[]'),
+      gallery_json TEXT NOT NULL DEFAULT ('[]'),
+      detail_json TEXT NOT NULL DEFAULT ('[]'),
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
@@ -90,4 +92,11 @@ function migrate() {
 }
 
 migrate();
+
+// Safe, idempotent column adds (existing DBs from before the gallery/detail fields).
+for (const col of ['gallery_json', 'detail_json']) {
+  const has = db.prepare(`PRAGMA table_info(products)`).all().some((c) => c.name === col);
+  if (!has) db.exec(`ALTER TABLE products ADD COLUMN ${col} TEXT NOT NULL DEFAULT ('[]')`);
+}
+
 module.exports = db;

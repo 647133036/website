@@ -1,12 +1,40 @@
 const db = require('./index');
 const { hashPassword } = require('../config/auth');
 
+const IMG = {
+  day:   ['/img/p40_1_1080x1350.jpeg', '/img/p40_4_1080x1350.jpeg', '/img/p40_6_1080x1350.jpeg', '/img/p41_4_1080x1350.jpeg'],
+  night: ['/img/p41_0_736x920.jpeg', '/img/p41_7_736x920.jpeg', '/img/p43_0_1528x2000.jpeg'],
+  bundle:['/img/p43_1_2752x1536.jpeg', '/img/p43_2_2752x1536.jpeg', '/img/p43_3_2752x1536.jpeg', '/img/p75_0_1920x1065.jpeg'],
+  starter:['/img/p39_5_1200x1500.jpeg', '/img/p39_1_1200x900.jpeg', '/img/p40_0_1500x1875.jpeg'],
+  detailBanner: '/img/detail-banner.jpeg'
+};
+
+function detailFor(p, images) {
+  return [
+    { type: 'banner', image: IMG.detailBanner, caption: p.meta },
+    { type: 'headline', title: 'How it works', body: p.description },
+    { type: 'list', title: 'What is inside', items: [
+      'Mucuna pruriens — HPLC standardised, independently checked',
+      'BF12 complex for absorption and stability',
+      'Precise, measured L-DOPA dose per capsule'
+    ] },
+    { type: 'grid', title: 'The MacuDopa method', items: [
+      { title: 'Fast-acting', body: 'Designed to bridge off-periods before they start.' },
+      { title: 'On-and-on', body: 'Steadier daytime dopamine, fewer dips.' },
+      { title: 'Practitioner-guided', body: 'Pair with your care team; never stop prescribed meds.' }
+    ] },
+    { type: 'guarantee', title: '30-day money-back guarantee', body: 'If it does not feel right, return it within 30 days for a full refund.' },
+    { type: 'gallery', title: 'In the frame', images }
+  ];
+}
+
 const PRODUCTS = [
   {
     slug: 'bundle-pd', name: 'Complete PD Bundle', price: 143.18, compare_price: null,
     category: 'bundle', tone: 'green', formula: 'Mucuna pruriens HPLC std + BF12',
     meta: 'Day + Night + Routine, 60-day supply', badge: 'Best value', stock: 25,
     description: 'Our full on-and-on range: MacuDopa Day, Night and the Routine program, sized for a 60-day supply. The most complete way to keep dopamine steady across the whole day.',
+    gallery: IMG.bundle, detail: detailFor({ meta: 'Day + Night + Routine, 60-day supply', description: 'The most complete on-and-on system: day, night and a routine that keeps you steady all 24 hours.' }, IMG.bundle),
     variants: [
       { id: 'single', label: 'One-off', delta: 0 },
       { id: 'sub', label: 'Subscribe & save', delta: -10, note: 'Save £10 + free shipping' }
@@ -17,6 +45,7 @@ const PRODUCTS = [
     category: 'bundle', tone: 'green', formula: 'Mucuna pruriens HPLC std + BF12',
     meta: 'Start your on-and-on routine', badge: 'New', stock: 60,
     description: 'Begin the MacuDopa method with the Day and Night pair. Smooths the morning off-period and supports daytime control in one pack.',
+    gallery: IMG.starter, detail: detailFor({ meta: 'Day + Night starter', description: 'Start with the Day and Night pair to smooth the morning off-period and support daytime control.' }, IMG.starter),
     variants: [
       { id: 'single', label: 'One-off', delta: 0 },
       { id: 'sub', label: 'Subscribe & save', delta: -5, note: 'Free shipping' }
@@ -27,6 +56,7 @@ const PRODUCTS = [
     category: 'day', tone: 'orange', formula: 'Mucuna pruriens HPLC std + BF12',
     meta: 'Daytime, fast-acting dopaminergic support', badge: null, stock: 120,
     description: 'Fast-acting daytime support built on L-DOPA from Mucuna pruriens. Take it just before your last dose fades to keep you on for longer.',
+    gallery: IMG.day, detail: detailFor({ meta: 'Daytime, fast-acting', description: 'Fast-acting daytime support that bridges off-periods before they start.' }, IMG.day),
     variants: [
       { id: '30', label: '30 capsules', delta: 0 },
       { id: '60', label: '60 capsules', delta: 20 },
@@ -38,6 +68,7 @@ const PRODUCTS = [
     category: 'night', tone: 'purple', formula: 'Mucuna pruriens HPLC std + BF12',
     meta: 'Overnight, smooths the morning off-period', badge: 'Coming soon', stock: 0,
     description: 'Overnight formula that bridges the pre-dawn dip so you wake up on, not off. Part of the MacuDopa Continuum Method.',
+    gallery: IMG.night, detail: detailFor({ meta: 'Overnight', description: 'Bridges the pre-dawn dip so you wake up on, not off — part of the MacuDopa Continuum Method.' }, IMG.night),
     variants: [
       { id: '30', label: '30 capsules', delta: 0 },
       { id: '60', label: '60 capsules', delta: 20 },
@@ -50,15 +81,17 @@ function seedProducts() {
   const n = db.prepare('SELECT COUNT(*) AS n FROM products').get().n;
   if (n > 0) return n;
   const ins = db.prepare(`
-    INSERT INTO products (slug, name, price, compare_price, category, tone, formula, meta, badge, description, stock, active, variants_json)
-    VALUES (@slug, @name, @price, @compare_price, @category, @tone, @formula, @meta, @badge, @description, @stock, 1, @variants_json)
+    INSERT INTO products (slug, name, price, compare_price, category, tone, formula, meta, badge, description, stock, active, variants_json, gallery_json, detail_json)
+    VALUES (@slug, @name, @price, @compare_price, @category, @tone, @formula, @meta, @badge, @description, @stock, 1, @variants_json, @gallery_json, @detail_json)
   `);
   for (const p of PRODUCTS) {
     ins.run({
       slug: p.slug, name: p.name, price: p.price, compare_price: p.compare_price,
       category: p.category, tone: p.tone, formula: p.formula, meta: p.meta,
       badge: p.badge, description: p.description, stock: p.stock,
-      variants_json: JSON.stringify(p.variants)
+      variants_json: JSON.stringify(p.variants),
+      gallery_json: JSON.stringify(p.gallery || []),
+      detail_json: JSON.stringify(p.detail || [])
     });
   }
   return db.prepare('SELECT COUNT(*) AS n FROM products').get().n;
@@ -153,3 +186,4 @@ function seed() {
 }
 
 seed();
+module.exports = { IMG, detailFor, PRODUCTS };

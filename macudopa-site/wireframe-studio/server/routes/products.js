@@ -5,13 +5,15 @@ const { requireAuth, requireRole } = require('../config/middleware');
 const router = express.Router();
 
 function pOut(r) {
-  let variants = [];
+  let variants = []; let gallery = []; let detail = [];
   try { variants = JSON.parse(r.variants_json || '[]'); } catch (e) { /* noop */ }
+  try { gallery = JSON.parse(r.gallery_json || '[]'); } catch (e) { /* noop */ }
+  try { detail = JSON.parse(r.detail_json || '[]'); } catch (e) { /* noop */ }
   return {
     id: r.id, slug: r.slug, name: r.name, price: r.price, comparePrice: r.compare_price,
     category: r.category, tone: r.tone, formula: r.formula, meta: r.meta,
     badge: r.badge, description: r.description, stock: r.stock, active: !!r.active,
-    variants
+    variants, gallery, detail
   };
 }
 
@@ -39,14 +41,15 @@ router.post('/', requireAuth, requireRole('admin'), (req, res) => {
   if (!b.slug || !b.name || b.price == null) return res.status(400).json({ error: 'slug, name and price required' });
   try {
     const info = db.prepare(`
-      INSERT INTO products (slug, name, price, compare_price, category, tone, formula, meta, badge, description, stock, active, variants_json)
-      VALUES (@slug, @name, @price, @compare_price, @category, @tone, @formula, @meta, @badge, @description, @stock, @active, @variants_json)
+      INSERT INTO products (slug, name, price, compare_price, category, tone, formula, meta, badge, description, stock, active, variants_json, gallery_json, detail_json)
+      VALUES (@slug, @name, @price, @compare_price, @category, @tone, @formula, @meta, @badge, @description, @stock, @active, @variants_json, @gallery_json, @detail_json)
     `).run({
       slug: String(b.slug).trim().toLowerCase().replace(/[^a-z0-9-]+/g, '-'),
       name: b.name, price: Number(b.price), compare_price: b.compare_price == null ? null : Number(b.compare_price),
       category: b.category || '', tone: b.tone || 'orange', formula: b.formula || '', meta: b.meta || '',
       badge: b.badge || null, description: b.description || '', stock: Number(b.stock || 100),
-      active: b.active ? 1 : 0, variants_json: JSON.stringify(b.variants || [])
+      active: b.active ? 1 : 0, variants_json: JSON.stringify(b.variants || []),
+      gallery_json: JSON.stringify(b.gallery || []), detail_json: JSON.stringify(b.detail || [])
     });
     res.status(201).json(pOut(db.prepare('SELECT * FROM products WHERE id = ?').get(info.lastInsertRowid)));
   } catch (e) {
@@ -64,7 +67,8 @@ router.put('/:slug', requireAuth, requireRole('admin'), (req, res) => {
       name = COALESCE(?, name), price = COALESCE(?, price), compare_price = COALESCE(?, compare_price),
       category = COALESCE(?, category), tone = COALESCE(?, tone), formula = COALESCE(?, formula),
       meta = COALESCE(?, meta), badge = ?, description = COALESCE(?, description),
-      stock = COALESCE(?, stock), active = COALESCE(?, active), variants_json = ?
+      stock = COALESCE(?, stock), active = COALESCE(?, active), variants_json = ?,
+      gallery_json = ?, detail_json = ?
     WHERE slug = ?
   `).run(
     b.name ?? null, b.price ?? null, b.compare_price === undefined ? null : b.compare_price,
@@ -72,6 +76,8 @@ router.put('/:slug', requireAuth, requireRole('admin'), (req, res) => {
     b.badge === undefined ? null : b.badge, b.description ?? null,
     b.stock ?? null, b.active === undefined ? null : (b.active ? 1 : 0),
     b.variants === undefined ? r.variants_json : JSON.stringify(b.variants),
+    b.gallery === undefined ? r.gallery_json : JSON.stringify(b.gallery),
+    b.detail === undefined ? r.detail_json : JSON.stringify(b.detail),
     req.params.slug
   );
   res.json(pOut(db.prepare('SELECT * FROM products WHERE slug = ?').get(req.params.slug)));
