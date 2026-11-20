@@ -1,8 +1,18 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
-const ACCESS_SECRET = process.env.ACCESS_SECRET || 'dev-access-secret-change-me';
-const REFRESH_SECRET = process.env.REFRESH_SECRET || 'dev-refresh-secret-change-me';
+// Secrets must be provided in production; a hardcoded fallback would let anyone
+// mint valid tokens, so refuse to start when NODE_ENV=production without them.
+function requireSecret(name, fallback) {
+  if (process.env[name]) return process.env[name];
+  if (process.env.NODE_ENV === 'production') {
+    console.error(`[auth] FATAL: ${name} must be set in production (no hardcoded fallback).`);
+    process.exit(1);
+  }
+  return fallback;
+}
+const ACCESS_SECRET = requireSecret('ACCESS_SECRET', 'dev-access-secret-change-me');
+const REFRESH_SECRET = requireSecret('REFRESH_SECRET', 'dev-refresh-secret-change-me');
 const ACCESS_TTL = '15m';
 const REFRESH_TTL = '7d';
 

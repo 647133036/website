@@ -152,3 +152,20 @@ test('data：admin 导出 CSV + 导入；viewer 403', async () => {
   assert.equal((await call(app, '/data/export?datasets=products', { token: v })).status, 403);
   assert.equal((await call(app, '/data/import', { method: 'POST', body: 'x', token: v })).status, 403);
 });
+
+test('security：用户导入缺口令 → 生成一次性随机强口令并回传，无弱默认', async () => {
+  const a = await token('admin@macudopa.com', 'admin123');
+  const r = await call(app, '/data/import', { method: 'POST', token: a, body: { users: { users: [{ email: 'imp-no-pw@test.com', name: 'Imp', group: 'Viewers' }] } } });
+  assert.equal(r.status, 200);
+  assert.ok(Array.isArray(r.data.temporaryPasswords), '应回传 temporaryPasswords');
+  const t = r.data.temporaryPasswords.find((x) => x.email === 'imp-no-pw@test.com');
+  assert.ok(t, '应包含该用户的临时口令');
+  assert.ok(t.temporaryPassword && t.temporaryPassword.length >= 16, '临时口令应足够长且随机');
+  assert.notEqual(t.temporaryPassword, 'changeme123', '不得再落弱默认口令');
+});
+
+test('security：非法 JSON 请求体 → 400 而非 500', async () => {
+  const a = await token('admin@macudopa.com', 'admin123');
+  const r = await call(app, '/orders', { method: 'POST', token: a, body: '{bad json', rawJson: true });
+  assert.equal(r.status, 400);
+});

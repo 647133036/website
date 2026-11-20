@@ -21,12 +21,13 @@ function freshApp() {
   return { app, file };
 }
 
-async function call(app, url, { method = 'GET', body, token } = {}) {
+async function call(app, url, { method = 'GET', body, token, rawJson } = {}) {
   const path = url.startsWith('/api/') ? url : '/api' + url;
   let out = request(app)[method.toLowerCase()](path);
   if (token) out = out.set('Authorization', 'Bearer ' + token);
   if (body !== undefined) {
-    if (typeof body === 'string') out = out.send(body);
+    if (rawJson && typeof body === 'string') out = out.set('Content-Type', 'application/json').send(body);
+    else if (typeof body === 'string') out = out.send(body);
     else out = out.set('Content-Type', 'application/json').send(body);
   }
   const res = await out;

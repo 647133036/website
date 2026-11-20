@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const db = require('../db');
 const { hashPassword } = require('../config/auth');
 const { requireAuth, requireRole } = require('../config/middleware');
@@ -157,14 +158,18 @@ function importUsers(payload) {
     groups++;
   }
   const nameToId = Object.fromEntries(db.prepare('SELECT id, name FROM user_groups').all().map((g) => [g.name, g.id]));
+  const created = [];
   for (const u of (payload.users || [])) {
     if (!u || !u.email) continue;
     const gid = u.groupId != null ? u.groupId : (u.group ? nameToId[u.group] : null);
+    // 无显式口令时落一次性随机强口令并回传，避免弱默认密码被复用
+    const password = u.password || crypto.randomBytes(8).toString('hex');
     db.prepare(`INSERT INTO users (email, password_hash, name, group_id) VALUES (?,?,?,?) ON CONFLICT(email) DO UPDATE SET name=excluded.name, group_id=excluded.group_id`)
-      .run(u.email, hashPassword(u.password || 'changeme123'), u.name || u.email, gid || null);
+      .run(u.email, hashPassword(password), u.name || u.email, gid || null);
+    if (!u.password) created.push({ email: u.email, temporaryPassword: password });
     users++;
   }
-  return { groups, users };
+  return { groups, users, created };
 }
 
 router.post('/import', (req, res) => {
@@ -176,10 +181,15 @@ router.post('/import', (req, res) => {
   const result = { ok: true, counts: {} };
   const overwrite = body.overwrite === true;
   try {
+    let userImport = null;
     if (Array.isArray(data.products)) result.counts.products = importProducts(data.products);
     if (Array.isArray(data.orders)) result.counts.orders = importOrders(data.orders);
     if (Array.isArray(data.wireframes)) result.counts.wireframes = importWireframes(data.wireframes);
-    if (data.users && Array.isArray(data.users.users)) result.counts.users = importUsers(data.users);
+    if (data.users && Array.isArray(data.users.users)) userImport = importUsers(data.users);
+    if (userImport) {
+      result.counts.users = userImport.users;
+      if (userImport.created && userImport.created.length) result.temporaryPasswords = userImport.created;
+    }
     if (Object.keys(result.counts).length === 0) return res.status(400).json({ error: 'No recognizable dataset to import. Provide products / orders / wireframes / users.' });
     res.json(result);
   } catch (e) {
