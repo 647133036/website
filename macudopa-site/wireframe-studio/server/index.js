@@ -17,6 +17,7 @@ app.use('/api', require('./routes/users'));
 app.use('/api/wireframes', require('./routes/wireframes'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/data', require('./routes/data'));
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 app.use((err, req, res, next) => {

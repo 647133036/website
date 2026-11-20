@@ -53,13 +53,18 @@ function toForm(obj) {
   return out.join('&');
 }
 
-export async function api(path, { method = 'GET', body, auth = true } = {}) {
+export async function api(path, { method = 'GET', body, auth = true, rawField } = {}) {
   const opts = { method, headers: {} };
   // URL-encoded bodies are "simple requests" (no CORS preflight) and survive
   // the preview gateway, unlike JSON payloads whose preflight lacks ACAO.
   if (body !== undefined) {
     opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    opts.body = toForm(body);
+    if (rawField) {
+      // send an arbitrary object as one JSON string under a named field
+      opts.body = new URLSearchParams({ [rawField]: JSON.stringify(body) }).toString();
+    } else {
+      opts.body = toForm(body);
+    }
   }
   if (auth) {
     const t = getTokens();

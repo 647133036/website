@@ -8,6 +8,7 @@ import { GroupsPage } from './pages/Groups.jsx';
 import { PreviewPage } from './pages/Preview.jsx';
 import { OrdersPage } from './pages/Orders.jsx';
 import { MyOrdersPage } from './pages/MyOrders.jsx';
+import { DataPage } from './pages/Data.jsx';
 import { ProductsAdmin } from './pages/ProductsAdmin.jsx';
 import { ShopPage, ProductDetailPage } from './components/shop.jsx';
 import { Spinner, Guard } from './components/ui.jsx';
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="/my-orders" element={<MyOrdersPage />} />
         <Route path="/products" element={<Guard need="admin"><ProductsAdmin /></Guard>} />
         <Route path="/users" element={<Guard need="admin"><UsersPage /></Guard>} />
+        <Route path="/data" element={<Guard need="admin"><DataPage /></Guard>} />
         <Route path="/groups" element={<Guard need="admin"><GroupsPage /></Guard>} />
       </Routes>
     </StudioShell>

@@ -23,6 +23,7 @@ export function StudioShell({ children }) {
               <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>Products</NavLink>
               <NavLink to="/groups" className={({ isActive }) => (isActive ? 'active' : '')}>Groups</NavLink>
               <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>
+              <NavLink to="/data" className={({ isActive }) => (isActive ? 'active' : '')}>Data</NavLink>
             </>
           ) : (
             <>
