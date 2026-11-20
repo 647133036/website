@@ -105,9 +105,10 @@ macudopa-site/
 ```bash
 cd wireframe-studio/server
 npm install        # 已装可跳过
-npm run seed       # 首次：建表 + 灌入种子（用户 / 页面 / 模块 / 商品）
+npm run seed       # 首次：建表 + 灌入种子（用户 / 页面 / 模块 / 商品）；已存在则部分幂等
 npm start          # 或 npm run dev（--watch）
 ```
+> 想彻底重置数据：删掉 `server/data/studio.db` 再 `npm run seed`。
 
 ### 2) 启动前端（:5180）
 ```bash
@@ -198,6 +199,8 @@ Studio 里每个 block 的 **section_name 就是 Shopify 主题里的 Liquid sec
 - **改种子内容**：`server/db/seed.js`（3 组、3 用户、5 页面 × 双帧、4 商品）。
 - **加模块类型**：`web/src/lib/sections.js` 加一条 `SECTIONS` 条目 + `components/sections.jsx` 加一个渲染器 + 主题加同名 `.liquid`。
 - **本地预览入口**（本开发环境）：`https://5180-f80defe8516eb8f6.monkeycode-ai.online`（Vite :5180，/api 反代 :3001）。
+  - 预览网关只暴露 Vite 的 5180；旧端口（如 8199）已失效，统一用 5180 入口。
+  - 前端是 SPA，改过代码后浏览器要**强刷**（Cmd/Ctrl+Shift+R）或开无痕窗口，否则会拿到旧 JS 缓存，出现「点链接不跳转 / 看到旧行为」。
 
 ---
 
