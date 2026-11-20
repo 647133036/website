@@ -60,20 +60,16 @@ router.get('/users', requireAuth, (req, res) => {
 });
 
 router.post('/users', requireRole('admin'), (req, res) => {
-  const { email, password, name, groupId, role } = req.body || {};
+  const { email, password, name, groupId } = req.body || {};
   if (!email || !password || !name) return res.status(400).json({ error: 'email, password and name required' });
   const exists = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
   if (exists) return res.status(409).json({ error: 'Email already in use' });
-  let gid = groupId;
-  let gRole = role;
-  if (groupId) {
-    const g = db.prepare('SELECT id, role FROM user_groups WHERE id = ?').get(groupId);
-    if (g) gRole = g.role;
+  let gid = groupId || null;
+  if (gid) {
+    const g = db.prepare('SELECT id FROM user_groups WHERE id = ?').get(gid);
+    if (!g) gid = null;
   }
-  const info = db.prepare('INSERT INTO users (email, password_hash, name, group_id) VALUES (?, ?, ?, ?)').run(email, hashPassword(password), name, gid || null);
-  if (gid && gRole) {
-    db.prepare('UPDATE user_groups SET role = ? WHERE id = ?').run(gRole, gid);
-  }
+  const info = db.prepare('INSERT INTO users (email, password_hash, name, group_id) VALUES (?, ?, ?, ?)').run(email, hashPassword(password), name, gid);
   const user = db.prepare('SELECT u.*, g.name AS group_name, g.role AS role FROM users u LEFT JOIN user_groups g ON g.id=u.group_id WHERE u.id=?').get(info.lastInsertRowid);
   res.status(201).json(publicUser(user));
 });
