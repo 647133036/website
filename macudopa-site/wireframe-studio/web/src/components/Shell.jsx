@@ -19,6 +19,8 @@ export function StudioShell({ children }) {
               <NavLink to="/studio" className={({ isActive }) => (isActive ? 'active' : '')}>Studio</NavLink>
               <NavLink to="/preview" className={({ isActive }) => (isActive ? 'active' : '')}>Preview</NavLink>
               <NavLink to="/shop" className={({ isActive }) => (isActive ? 'active' : '')}>Shop</NavLink>
+              <NavLink to="/faq" className={({ isActive }) => (isActive ? 'active' : '')}>FAQs</NavLink>
+              <NavLink to="/our-story" className={({ isActive }) => (isActive ? 'active' : '')}>Our Story</NavLink>
               <NavLink to="/orders" className={({ isActive }) => (isActive ? 'active' : '')}>Orders</NavLink>
               <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>Products</NavLink>
               <NavLink to="/groups" className={({ isActive }) => (isActive ? 'active' : '')}>Groups</NavLink>
@@ -28,6 +30,8 @@ export function StudioShell({ children }) {
           ) : (
             <>
               <NavLink to="/shop" className={({ isActive }) => (isActive ? 'active' : '')}>Shop</NavLink>
+              <NavLink to="/faq" className={({ isActive }) => (isActive ? 'active' : '')}>FAQs</NavLink>
+              <NavLink to="/our-story" className={({ isActive }) => (isActive ? 'active' : '')}>Our Story</NavLink>
               <NavLink to="/my-orders" className={({ isActive }) => (isActive ? 'active' : '')}>My orders</NavLink>
             </>
           )}

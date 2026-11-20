@@ -30,8 +30,26 @@ function BottleSVG({ tone }) {
   );
 }
 
-async function fetchProducts() {
+export async function fetchProducts() {
   return api('/products');
+}
+
+// A small horizontal row of recommended product cards (used by the
+// 'product-recommendations' section and the PDP "pairs well with" area).
+export function RecommendationsView({ products: preset, limit = 4, title }) {
+  const [products, setProducts] = useState(preset || []);
+  useEffect(() => {
+    if (preset && preset.length) { setProducts(preset); return; }
+    (async () => { try { setProducts(await api('/products').then((all) => all.slice(0, limit))); } catch (e) { /* noop */ } })();
+  }, [preset, limit]);
+  if (!products.length) return <div className="pcard-meta">Loading…</div>;
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(' + Math.min(products.length, 4) + ',1fr)', gap: 12 }}>
+      {products.slice(0, limit).map((p) => (
+        <ProductCard key={p.id} product={p} onOpen={() => {}} />
+      ))}
+    </div>
+  );
 }
 
 export function ProductCard({ product, onOpen }) {

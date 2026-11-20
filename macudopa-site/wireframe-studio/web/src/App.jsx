@@ -9,6 +9,7 @@ import { PreviewPage } from './pages/Preview.jsx';
 import { OrdersPage } from './pages/Orders.jsx';
 import { MyOrdersPage } from './pages/MyOrders.jsx';
 import { DataPage } from './pages/Data.jsx';
+import { PageDetail } from './pages/PageDetail.jsx';
 import { ProductsAdmin } from './pages/ProductsAdmin.jsx';
 import { ShopPage, ProductDetailPage } from './components/shop.jsx';
 import { Spinner, Guard } from './components/ui.jsx';
@@ -38,6 +39,9 @@ export default function App() {
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/orders" element={<Guard need="admin"><OrdersPage /></Guard>} />
         <Route path="/my-orders" element={<MyOrdersPage />} />
+        <Route path="/home" element={<PageDetail slug="home" />} />
+        <Route path="/faq" element={<PageDetail slug="faq" />} />
+        <Route path="/our-story" element={<PageDetail slug="our-story" />} />
         <Route path="/products" element={<Guard need="admin"><ProductsAdmin /></Guard>} />
         <Route path="/users" element={<Guard need="admin"><UsersPage /></Guard>} />
         <Route path="/data" element={<Guard need="admin"><DataPage /></Guard>} />

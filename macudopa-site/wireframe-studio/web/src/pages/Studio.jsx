@@ -1,29 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
-import { sectionMeta, SECTIONS } from '../lib/sections.js';
+import { sectionMeta, SECTIONS, resolveProps } from '../lib/sections.js';
 import { useAuth, can } from '../auth.jsx';
 import { Toast } from '../components/ui.jsx';
-import { ShopView, ProductPage } from '../components/shop.jsx';
+import { SectionRenderer } from '../components/sections.jsx';
 
-function BlockPreview({ block, onOpenProduct }) {
-  const meta = sectionMeta(block.section);
-  let content = <div className="bf-box"><div>{block.label || meta.desc}</div><div style={{ marginTop: 4, fontSize: 11 }}>wireframe placeholder</div></div>;
-  if (block.section === 'product-grid') content = <div className="bf-live"><ShopView onOpenProduct={onOpenProduct} /></div>;
-  if (block.section === 'product-page') content = <div className="bf-live"><PDPBlock onOpenProduct={onOpenProduct} /></div>;
-  return (
-    <div className={`block-frame ${block.visible ? '' : 'hidden'}`}>
-      <div className="bf-tag">{meta.label} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {block.section}</span></div>
-      {content}
-    </div>
-  );
-}
-
-function PDPBlock({ onOpenProduct }) {
-  const [p, setP] = useState(null);
-  useEffect(() => { api('/products/macudopa-day').then(setP).catch(() => setP(null)); }, []);
-  if (!p) return <div className="bf-box">loading…</div>;
-  return <ProductPage product={p} onBack={onOpenProduct} />;
+function FieldInput({ field, value, onChange }) {
+  const set = (v) => onChange(v);
+  if (field.type === 'textarea') return <textarea value={value} onChange={(e) => set(e.target.value)} style={{ width: '100%', minHeight: 60, borderRadius: 8, border: '1px solid var(--line)', padding: 8 }} />;
+  if (field.type === 'list') {
+    const txt = Array.isArray(value) ? value.join('\n') : (value || '');
+    return <textarea value={txt} onChange={(e) => set(e.target.value.split('\n').filter((x) => x.trim()))} placeholder="one item per line" style={{ width: '100%', minHeight: 60, borderRadius: 8, border: '1px solid var(--line)', padding: 8 }} />;
+  }
+  if (field.type === 'kvList') {
+    const txt = Array.isArray(value) ? value.join('\n') : (value || '');
+    return <textarea value={txt} onChange={(e) => set(e.target.value.split('\n').filter((x) => x.trim()))} placeholder="label=value (one per line)" style={{ width: '100%', minHeight: 80, borderRadius: 8, border: '1px solid var(--line)', padding: 8 }} />;
+  }
+  if (field.type === 'grid') {
+    const txt = Array.isArray(value) ? value.join('\n') : (value || '');
+    return <textarea value={txt} onChange={(e) => set(e.target.value.split('\n').filter((x) => x.trim()))} placeholder="title|body (one per line)" style={{ width: '100%', minHeight: 80, borderRadius: 8, border: '1px solid var(--line)', padding: 8 }} />;
+  }
+  if (field.type === 'image') return <input value={value} onChange={(e) => set(e.target.value)} placeholder="/img/… or a URL" style={{ width: '100%', borderRadius: 8, border: '1px solid var(--line)', padding: 8 }} />;
+  return <input value={value} onChange={(e) => set(e.target.value)} style={{ width: '100%', borderRadius: 8, border: '1px solid var(--line)', padding: 8 }} />;
 }
 
 export function StudioPage() {
@@ -152,7 +151,7 @@ export function StudioPage() {
               <div className="canvas-head" style={{ marginBottom: 10 }}>
                 <div className="pt" style={{ fontSize: 15 }}>{editable ? 'Blocks' : 'Blocks (read-only)'}</div>
                 {editable && (
-                  <select className="btn sm" style={{ marginLeft: 'auto' }} value="" onChange={(e) => e.target.value && (addBlock(e.target.value), e.target.value = '')} defaultValue="">
+                  <select className="btn sm" style={{ marginLeft: 'auto' }} defaultValue="" onChange={(e) => { if (e.target.value) addBlock(e.target.value); e.target.value = ''; }}>
                     <option value="">+ Add section…</option>
                     {Object.keys(SECTIONS).filter((k) => !blocks.some((b) => b.section === k)).map((k) => <option key={k} value={k}>{k}</option>)}
                   </select>
@@ -177,6 +176,18 @@ export function StudioPage() {
                       <div className="block-body" onClick={(e) => e.stopPropagation()}>
                         <div className="prop"><label>Section (Liquid id)</label><input value={b.section} onChange={(e) => updateBlock(b.id, { section: e.target.value })} /></div>
                         <div className="prop"><label>Label</label><input value={b.label} onChange={(e) => updateBlock(b.id, { label: e.target.value })} /></div>
+                        {sectionMeta(b.section).fields.map((f) => {
+                          const cur = resolveProps(b.section, b.props)[f.key];
+                          return (
+                            <div className="prop" key={f.key}>
+                              <label>{f.label}</label>
+                              <FieldInput field={f} value={cur} onChange={(v) => updateBlock(b.id, { props: { ...(b.props || {}), [f.key]: v } })} />
+                            </div>
+                          );
+                        })}
+                        {sectionMeta(b.section).fields.length === 0 && (
+                          <div className="prop" style={{ fontSize: 12, color: 'var(--muted)' }}>{b.section === 'product-grid' || b.section === 'product-page' ? 'Live module — content comes from your products.' : 'No editable fields for this module yet.'}</div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -188,7 +199,12 @@ export function StudioPage() {
             <div className="preview">
               <div className={`device ${frame === '390' ? 'm' : 'd'}`}>
                 <div className="screen">
-                  {blocks.map((b) => <BlockPreview key={b.id} block={b} onOpenProduct={() => nav('/shop')} />)}
+                  {blocks.map((b) => (
+                    <div key={b.id} className={`block-frame ${b.visible ? '' : 'hidden'}`}>
+                      <div className="bf-tag">{sectionMeta(b.section).label} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {b.section}</span></div>
+                      <SectionRenderer block={b} onOpenProduct={() => nav('/shop')} />
+                    </div>
+                  ))}
                   {blocks.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--muted)' }}>Empty frame</div>}
                 </div>
               </div>

@@ -1,17 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api.js';
-import { sectionMeta } from '../lib/sections.js';
-
-function PreviewBlock({ block }) {
-  const meta = sectionMeta(block.section);
-  if (!block.visible) return null;
-  return (
-    <div className="block-frame">
-      <div className="bf-tag">{meta.label} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {block.section}</span></div>
-      <div className="bf-box">{block.label || meta.desc}</div>
-    </div>
-  );
-}
+import { SectionRenderer } from '../components/sections.jsx';
 
 export function PreviewPage() {
   const [pages, setPages] = useState([]);
@@ -30,7 +19,7 @@ export function PreviewPage() {
   return (
     <div className="admin">
       <h1>Preview</h1>
-      <p style={{ color: 'var(--muted)' }}>Read-only render of the selected wireframe. Hidden blocks are excluded.</p>
+      <p style={{ color: 'var(--muted)' }}>Read-only, content-filled render of the selected wireframe. Hidden blocks are excluded.</p>
       <div className="toolbar">
         <div className="seg-toggle">
           {pages.map((p) => <button key={p.slug} className={p.slug === slug ? 'on' : ''} onClick={() => setSlug(p.slug)}>{p.title}</button>)}
@@ -43,7 +32,8 @@ export function PreviewPage() {
       <div style={{ maxWidth: frame === '390' ? 390 : 900, margin: '0 auto' }}>
         <div className="device" style={{ padding: 14 }}>
           <div className="screen" style={{ minHeight: 420 }}>
-            {(page?.frames[frame] || []).map((b) => <PreviewBlock key={b.id} block={b} />)}
+            {(page?.frames[frame] || []).filter((b) => b.visible).map((b) => <SectionRenderer key={b.id} block={b} />)}
+            {(page?.frames[frame] || []).length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--muted)' }}>Empty frame</div>}
           </div>
         </div>
       </div>
