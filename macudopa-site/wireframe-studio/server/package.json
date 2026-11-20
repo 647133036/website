@@ -7,7 +7,12 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "seed": "node db/seed.js"
+    "seed": "node db/seed.js",
+    "test": "node --test test/unit.test.js test/integration.test.js test/system.test.js",
+    "test:unit": "node --test test/unit.test.js",
+    "test:integration": "node --test test/integration.test.js",
+    "test:system": "node --test test/system.test.js",
+    "test:load": "node test/load.js"
   },
   "dependencies": {
     "better-sqlite3": "^13.2.0",
@@ -15,5 +20,8 @@
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
     "stripe": "^23.2.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.3.2"
   }
 }
