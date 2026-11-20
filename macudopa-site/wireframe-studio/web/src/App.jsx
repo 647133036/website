@@ -18,14 +18,22 @@ export default function App() {
   const { user, loading } = useAuth();
   if (loading) return <Spinner />;
   if (!user) {
+    // Public browsing: no login required. Shop + content pages + PDP.
+    // Admin/editor routes are simply absent; unknown paths fall back to home.
     return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
+      <StudioShell>
         <Routes>
+          <Route path="/" element={<PageDetail slug="home" />} />
+          <Route path="/home" element={<PageDetail slug="home" />} />
+          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/faq" element={<PageDetail slug="faq" />} />
+          <Route path="/our-story" element={<PageDetail slug="our-story" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/*" element={<Navigate to="/login" replace />} />
+          <Route path="/*" element={<PageDetail slug="home" />} />
         </Routes>
-      </div>
+      </StudioShell>
     );
   }
   return (

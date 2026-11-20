@@ -1,9 +1,8 @@
 const express = require('express');
 const db = require('../db');
-const { requireAuth, requireRole } = require('../config/middleware');
+const { requireRole } = require('../config/middleware');
 
 const router = express.Router();
-router.use(requireAuth);
 
 function parseProps(json) {
   try { return JSON.parse(json || '{}'); } catch (e) { return {}; }
