@@ -40,6 +40,8 @@ export function StudioPage() {
   const [sel, setSel] = useState(null);
   const [toast, setToast] = useState('');
   const [loading, setLoading] = useState(true);
+  const [dragIdx, setDragIdx] = useState(null);
+  const [overIdx, setOverIdx] = useState(null);
 
   const flash = (m) => { setToast(m); setTimeout(() => setToast(''), 2200); };
 
@@ -99,6 +101,9 @@ export function StudioPage() {
     arr.splice(to, 0, it);
     reorder(arr);
   };
+  const onDragStart = (i) => { if (!editable) return; setDragIdx(i); };
+  const onDragOver = (i) => { if (dragIdx === null || dragIdx === i) return; setOverIdx(i); setBlocks((cur) => { const arr = [...cur]; const [it] = arr.splice(dragIdx, 1); arr.splice(i, 0, it); return arr; }); setDragIdx(i); };
+  const onDragEnd = () => { if (dragIdx !== null) reorder(blocks); setDragIdx(null); setOverIdx(null); };
 
   const addPage = async () => {
     const t = prompt('New page title?');
@@ -159,9 +164,18 @@ export function StudioPage() {
               </div>
               <div className="block-list">
                 {blocks.map((b, i) => (
-                  <div key={b.id} className={`block-item ${sel === b.id ? 'selected' : ''}`} onClick={() => setSel(b.id)}>
+                  <div
+                    key={b.id}
+                    className={`block-item ${sel === b.id ? 'selected' : ''} ${dragIdx === i ? 'dragging' : ''}`}
+                    draggable={editable}
+                    onDragStart={() => onDragStart(i)}
+                    onDragOver={(e) => { e.preventDefault(); onDragOver(i); }}
+                    onDrop={(e) => e.preventDefault()}
+                    onDragEnd={onDragEnd}
+                    onClick={() => setSel(b.id)}
+                  >
                     <div className="block-row">
-                      <span className="grip" title="Drag to reorder" onClick={(e) => e.stopPropagation()}>{'\u2016'}</span>
+                      <span className="grip" title={editable ? 'Drag to reorder' : ''} onClick={(e) => e.stopPropagation()}>{'\u2016'}</span>
                       <div className="bn">{b.label || b.section}<small>{b.section}</small></div>
                       {editable && (
                         <>
