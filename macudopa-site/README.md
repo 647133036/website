@@ -255,7 +255,30 @@ const toTemplate = (blocks) =>
 
 ---
 
-## 十、技术栈
+## 十、测试体系
+
+四层测试，全绿（24 项 + 主题结构校验）。零框架依赖（用 Node 22 内置 `node:test`），集成测试仅加 `supertest`，全部用**隔离的临时 SQLite**，不碰生产 `server/data/studio.db`。
+
+```bash
+cd wireframe-studio/server && npm test        # 单测 + 集成 + 系统，一次性全跑
+cd wireframe-studio/web    && npm test        # 前端纯逻辑单测
+node theme-lint.js                                    # Shopify 主题结构校验
+```
+
+| 层 | 文件 | 覆盖 |
+|----|------|------|
+| 单元 | `server/test/unit.test.js` | 支付网关 `charge`/`activeMethod`（mock 通过 / `0000` 拒付 / 未配置 PSP 明确报错，绝不静默通过） |
+| 单元 | `web/test/sections.test.js` | `resolveProps` 默认值+覆盖、`sectionMeta` 回退、17 个 section schema 完整性 |
+| 集成 | `server/test/integration.test.js` | 真实 app + 临时 DB：auth 登录、RBAC 三级 401/403 边界、wireframes CRUD+重排、orders 下单扣库存+拒付+**定价数学（variant delta / 免邮阈值 / 运费）/库存 409/参数 400**、`/orders/mine` 仅本人、data 导出/导入权限 |
+| 系统 | `server/test/system.test.js` | 端到端用户旅程：匿名公开浏览 → 登录下单支付 → 库存扣减 → 我的订单 → 管理员退款 → RBAC 拒绝普通用户退款 → 导出反映 `refunded` |
+| 压力 | `server/test/load.js` | 对运行实例发并发请求，统计吞吐 / p50/p95/p99 / 错误率（基线 c=100 → ~2820 req/s、p95 60ms、0 错误） |
+
+- 详细运行步骤、夹具机制（`test/fixture.js` 每次随机临时 DB + 清 `require.cache`）、接口契约易踩点见 `wireframe-studio/server/test/README.md`。
+- 主题结构校验（`theme-lint.js`）验证 16 个 section 的 schema JSON 可解析且含可编辑面（settings/blocks/presets）、Liquid `{%`/`%}` 与 `{{`/`}}` 配对、模板引用的 section 文件确实存在、必备主题文件齐全；已负向验证（人为破坏标签 → 正确报 FAIL）。
+
+---
+
+## 十一、技术栈
 
 - 前端：React 18 + Vite + react-router-dom（SPA，URL-encoded API 客户端）
 - 后端：Node + Express + better-sqlite3 + jsonwebtoken（JWT access/refresh）

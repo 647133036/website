@@ -92,6 +92,49 @@ test('orders：下单扣库存 + 拒付不落单', async () => {
   assert.equal(bad.status, 402);
 });
 
+test('orders：定价数学（variant delta + 免邮阈值 + 运费）', async () => {
+  const a = await token('admin@macudopa.com', 'admin123');
+  // 造一个受控商品：base 10，订阅 variant delta -3 → 单件 unit=7
+  await call(app, '/products', { method: 'POST', body: {
+    slug: 'price-test', name: 'Price Test', price: 10,
+    variants: [{ id: 'oneoff', label: 'One-off', delta: 0 }, { id: 'sub', label: 'Subscribe', delta: -3 }]
+  }, token: a });
+
+  // 1) sub×2 = (10-3)*2 = 14 < 50 → 免邮阈值未达，加运费 4.95 → total 18.95
+  const o1 = await call(app, '/orders', { method: 'POST', body: { items: [{ slug: 'price-test', variant: 'sub', qty: 2 }], payment: { last4: '4242' } }, token: a });
+  assert.equal(o1.status, 201);
+  assert.equal(o1.data.order.subtotal, 14);
+  assert.equal(o1.data.order.shipping, 4.95);
+  assert.equal(o1.data.order.total, 18.95);
+
+  // 2) 凑到免邮：oneoff×6 = 60 >= 50 → 免运费
+  const o2 = await call(app, '/orders', { method: 'POST', body: { items: [{ slug: 'price-test', variant: 'oneoff', qty: 6 }], payment: { last4: '4242' } }, token: a });
+  assert.equal(o2.status, 201);
+  assert.equal(o2.data.order.subtotal, 60);
+  assert.equal(o2.data.order.shipping, 0);
+  assert.equal(o2.data.order.total, 60);
+
+  // 3) 混合行：sub×1(7) + oneoff×4(40) = 47 < 50 → 运费 4.95
+  const o3 = await call(app, '/orders', { method: 'POST', body: { items: [{ slug: 'price-test', variant: 'sub', qty: 1 }, { slug: 'price-test', variant: 'oneoff', qty: 4 }], payment: { last4: '4242' } }, token: a });
+  assert.equal(o3.status, 201);
+  assert.equal(o3.data.order.subtotal, 47);
+  assert.equal(o3.data.order.total, 51.95);
+});
+
+test('orders：库存不足 409，不扣不建单', async () => {
+  const a = await token('admin@macudopa.com', 'admin123');
+  const prods = await call(app, '/products');
+  const p = prods.data[0];
+  const bad = await call(app, '/orders', { method: 'POST', body: { items: [{ slug: p.slug, qty: p.stock + 50 }], payment: { last4: '4242' } }, token: a });
+  assert.equal(bad.status, 409);
+});
+
+test('orders：缺 items 400，未知 slug 404', async () => {
+  const a = await token('admin@macudopa.com', 'admin123');
+  assert.equal((await call(app, '/orders', { method: 'POST', body: {}, token: a })).status, 400);
+  assert.equal((await call(app, '/orders', { method: 'POST', body: { items: [{ slug: 'nope', qty: 1 }] }, token: a })).status, 404);
+});
+
 test('orders/mine：返回数组且只含当前用户订单', async () => {
   const a = await token('admin@macudopa.com', 'admin123');
   const r = await call(app, '/orders/mine', { token: a });

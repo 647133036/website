@@ -8,6 +8,7 @@
     "publish": "shopify theme publish --store \"$SHOP_STORE\" --theme \"macudopa\"",
     "check": "shopify theme check",
     "pull": "shopify theme pull --store \"$SHOP_STORE\"",
-    "preview": "shopify theme preview --store \"$SHOP_STORE\""
+    "preview": "shopify theme preview --store \"$SHOP_STORE\"",
+    "lint:structure": "node ../theme-lint.js"
   }
 }
