@@ -188,8 +188,59 @@ npm run dev
 
 Studio 里每个 block 的 **section_name 就是 Shopify 主题里的 Liquid section 文件名**（如 `faq-accordion` ↔ `theme/sections/faq-accordion.liquid`）。因此：
 - 在 Studio 设计好的页面结构 → 直接映射到 `theme/templates/*.json` 的 section 列表；
-- 模块的 `props` → 对应 Shopify section 编辑器里的设置项（`schema.json` 的 settings）。
+- 模块的 `props` → 对应 Shopify section 编辑器里的设置项（section `schema.json` 的 settings/blocks）。
 迁移时只需把 `props_json` 按 section 的 `schema.json` 键写入对应 template，即可在 Shopify 编辑器里继续细调与发布。
+
+### 8.1 部署 Shopify 主题（手动 / CLI 两种方式）
+
+**方式 A：Shopify 在线编辑器（手动，最稳）**
+1. 打开 Shopify 后台 → 线上商店 → 自定义（OS 2.0 主题编辑器）。
+2. 上传/导入 `theme/` 为 `.theme` 包：把 `theme/` 整目录打包成 zip（根目录含 `layout/theme.liquid`、`sections/`、`templates/`、`config/`），在编辑器「上传主题 zip」导入。
+3. 导入后在编辑器里逐个模板（首页 / 集合 / 商品 / 页面）核对 section 顺序，与 Studio 里设计的一致。
+4. 「发布」该主题。
+5. 在编辑器里把模块的 `settings`/`blocks` 按 Studio 里填的内容补一遍（或直接用 8.2 的导出 JSON 批量替换）。
+
+**方式 B：Shopify CLI（推荐，可重复 / 可 PR）**
+```bash
+# 安装 CLI（npm 全局）
+npm install -g @shopify/cli
+# 用 theme 目录作为工作区，发布到线上商店
+cd theme
+shopify theme publish --store <你的商店>.myshopify.com
+# 或推送为草稿主题再手动发布
+shopify theme push --store <你的商店>.myshopify.com
+```
+> CLI 需要商店账号 + 主题令牌（`shopify theme auth`），首次按提示走 OAuth。`theme publish` 直接上线，`theme push` 进草稿区。
+
+### 8.2 把 Studio 模块导出为 theme templates
+
+Studio 里的页面（`GET /api/wireframes` 返回 `frames` → `frame.1440[]` 每项是 `{ section, label, visible, order, props }`）需要转成 `templates/*.json` 的 `[ { type, settings, blocks } ]` 数组。对应规则：
+
+| Studio block | 模板 JSON 项 | 说明 |
+|--------------|-------------|------|
+| `section` (如 `hero`) | `"type": "hero"` | 直接同名 |
+| `props` (如 `{eyebrow, headline, image}`) | 展开到该 section 的 `settings` 或 `blocks[].settings` | 按 `theme/sections/<type>.liquid` 里 `schema.json` 的键名映射 |
+| `visible === false` | 该项省略（不写入模板） | 隐藏模块不出现在模板 |
+| `order` | 数组顺序（自上而下） | 模板按数组顺序渲染 section |
+
+落地步骤（在 Studio 前端或脚本里做一次性转换）：
+```js
+// page = await fetch('/api/wireframes/home')  → { frames: { '1440': [block...] } }
+const toTemplate = (blocks) =>
+  blocks.filter((b) => b.visible).map((b) => {
+    const s = b.props || {};
+    return { type: b.section, ...(s.settings || {}) };   // settings 键按 section schema 映射
+  });
+// 首页 → templates/index.json；商店 → collection.json；商品 → product.json；
+// faq 页 → page.faq.json；our-story → page.story.json
+```
+- 键名映射对照 `theme/sections/<type>.liquid` 的 `schema.json`：例如 `hero` 的 `eyebrow/headline/subhead/image` 对应其 `blocks` 里的 `eyebrow/headline/subhead` 等类型；若某 section 用 `settings`（非 blocks），则直接 `{ type, settings: props }`。
+- 商品类活模块（`product-grid` / `product-page` / `product-recommendations`）在 Shopify 里是动态集合/单品，不需要 `props`，只写 `{ "type": "product-grid" }` 即可。
+- 导出后写回 `theme/templates/*.json`，再走 8.1 方式 B `shopify theme push` 上线；或在编辑器里粘贴进对应模板的「Section 列表」。
+
+> 注意：Shopify 模板里的 section `type` 必须与 `theme/sections/` 文件名一致（去掉 `.liquid`）；props 键名必须与 section 的 `schema.json` 一致，多余键会被编辑器忽略，缺失键用 schema 默认值。
+
+
 
 ---
 
