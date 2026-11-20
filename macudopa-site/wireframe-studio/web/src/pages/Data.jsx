@@ -17,20 +17,22 @@ export function DataPage() {
 
   const flash = (m, ok) => { setMsg(ok ? m : '⚠ ' + m); setTimeout(() => setMsg(''), 3500); };
 
-  const doExport = async (format) => {
-    if (sel.length === 0) return flash('Pick at least one dataset to export.', false);
+  const doExport = async (format, datasets) => {
+    const ds = datasets && datasets.length ? datasets : sel;
+    if (ds.length === 0) return flash('Pick at least one dataset to export.', false);
     setBusy(true);
     try {
-      const url = `/api/data/export?datasets=${sel.join(',')}&format=${format}`;
-      const r = await fetch(url, { headers: { Authorization: `Bearer ${localStorage.getItem('mf_tokens') ? JSON.parse(localStorage.getItem('mf_tokens')).accessToken : ''}` } });
+      const url = `/api/data/export?datasets=${ds.join(',')}&format=${format}`;
+      const tok = localStorage.getItem('mf_tokens') ? JSON.parse(localStorage.getItem('mf_tokens')).accessToken : '';
+      const r = await fetch(url, { headers: { Authorization: `Bearer ${tok}` } });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `macudopa-${sel.join('-')}.${format}`;
+      a.download = `macudopa-${ds.join('-')}.${format}`;
       a.click();
       URL.revokeObjectURL(a.href);
-      flash(`Exported ${sel.join(', ')} as ${format.toUpperCase()}.`, true);
+      flash(`Exported ${ds.join(', ')} as ${format.toUpperCase()}.`, true);
     } catch (e) {
       flash('Export failed: ' + e.message, false);
     } finally {
@@ -72,8 +74,9 @@ export function DataPage() {
         <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
           <button className="btn primary" disabled={busy || sel.length === 0} onClick={() => doExport('json')}>Export JSON</button>
           <button className="btn" disabled={busy || sel.length === 0} onClick={() => doExport('csv')}>Export CSV</button>
+          <button className="btn" disabled={busy} onClick={() => doExport('json', DS.map((d) => d.key))}>Download all (JSON)</button>
         </div>
-        <p className="pcard-meta" style={{ marginTop: 10 }}>JSON export includes everything and is what Import expects. CSV export is a flat dump.</p>
+        <p className="pcard-meta" style={{ marginTop: 10 }}>JSON export includes everything and is what Import expects. CSV export is a flat tabular dump. "Download all" grabs every dataset in one file.</p>
       </div>
 
       <div className="card" style={{ marginTop: 14 }}>

@@ -2,7 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const db = require('../db');
 const { requireAuth, requireRole } = require('../config/middleware');
-const { charge, activeMethod } = require('../config/payment');
+const { charge, activeMethod, refund: pspRefund } = require('../config/payment');
 
 const router = express.Router();
 
@@ -17,8 +17,8 @@ function oOut(r) {
   };
 }
 
-// Place an order (mock payment gateway). body: { items:[{slug,variant,qty}], payment:{method} }
-router.post('/', requireAuth, (req, res) => {
+// Place an order. body: { items:[{slug,variant,qty}], payment:{method,last4} }
+router.post('/', requireAuth, async (req, res) => {
   const { items, payment } = req.body || {};
   if (!Array.isArray(items) || items.length === 0) return res.status(400).json({ error: 'items required' });
   const lines = [];
@@ -41,10 +41,11 @@ router.post('/', requireAuth, (req, res) => {
   const shipping = subtotal >= 50 ? 0 : 4.95;
   const total = +(subtotal + shipping).toFixed(2);
 
-  // Charge through the active payment gateway (mock by default; stripe/paypal
-  // reserved via PAYMENT_METHOD env). The gateway decides approval.
-  const pResult = charge(payment);
   const ref = 'MCP-' + crypto.randomBytes(4).toString('hex').toUpperCase();
+
+  // Charge through the active gateway. ctx carries amount + identifiers so a real
+  // PSP (Stripe) can create a PaymentIntent; mock approves locally.
+  const pResult = await charge(payment, { totalCents: Math.round(total * 100), ref, userId: req.user.id });
 
   if (!pResult.approved) {
     return res.status(402).json({ error: pResult.error || 'Payment declined.' });
@@ -60,7 +61,8 @@ router.post('/', requireAuth, (req, res) => {
       VALUES (?, ?, 'paid', ?, ?, ?, ?, ?)
     `).run(ref, req.user.id, subtotal, shipping, total, JSON.stringify(lines), JSON.stringify({
       method: pResult.method, approved: true, last4: pResult.last4,
-      provider: pResult.provider, externalId: pResult.externalId || null
+      provider: pResult.provider, externalId: pResult.externalId || null,
+      intentStatus: pResult.intent ? pResult.intent.status : null
     }));
     return info.lastInsertRowid;
   });
@@ -87,6 +89,21 @@ router.get('/stats', requireAuth, requireRole('admin'), (req, res) => {
 // Active payment provider + config state (public; safe: no secrets).
 router.get('/payment', (req, res) => {
   res.json({ provider: activeMethod(), configured: activeMethod() === 'mock' || true });
+});
+
+// Admin: refund an order through the active PSP (reserved; no-op-safe on mock).
+router.post('/:ref/refund', requireAuth, requireRole('admin'), async (req, res) => {
+  const r = db.prepare('SELECT * FROM orders WHERE ref = ?').get(req.params.ref);
+  if (!r) return res.status(404).json({ error: 'Order not found' });
+  let payment = {};
+  try { payment = JSON.parse(r.payment_json || '{}'); } catch (e) { /* noop */ }
+  if (payment.provider === 'mock' || !payment.externalId) {
+    db.prepare("UPDATE orders SET status = 'refunded' WHERE ref = ?").run(req.params.ref);
+    return res.json({ ok: true, provider: 'mock', note: 'Mock order marked refunded.' });
+  }
+  const out = await pspRefund({ externalId: payment.externalId, provider: payment.provider }, Math.round(r.total * 100));
+  db.prepare("UPDATE orders SET status = 'refunded' WHERE ref = ?").run(req.params.ref);
+  res.json({ ok: true, provider: payment.provider, psp: out ? out.id : null });
 });
 
 router.get('/:ref', requireAuth, (req, res) => {

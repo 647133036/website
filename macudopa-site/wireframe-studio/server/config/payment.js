@@ -1,6 +1,10 @@
 // Payment gateway abstraction. Default is the built-in mock; Stripe / PayPal
-// are reserved so a real PSP can be enabled via env vars without touching order
-// flow. All gateways resolve to { approved, last4, provider, externalId?, error? }.
+// can be enabled via PAYMENT_METHOD + provider env vars. Results resolve to
+// { approved, last4, provider, externalId?, error?, intent? }.
+//
+// Stripe: a real PaymentIntent is created server-side when STRIPE_SECRET_KEY
+// is present, so a real PSP can be wired in without touching the order flow.
+// Capture and refund helpers are reserved.
 
 const crypto = require('crypto');
 
@@ -15,20 +19,40 @@ function mockGateway(payment) {
   };
 }
 
-function stripeGateway(payment) {
-  // Reserved integration point. A real implementation would create a Payment
-  // Intent with the Stripe SDK and confirm with a token; here it validates that
-  // the provider key is configured so callers get a clear signal instead of a
-  // silent success.
+function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) return { approved: false, provider: 'stripe', error: 'Stripe is not configured (STRIPE_SECRET_KEY missing). Using mock is recommended until a PSP is set up.' };
+  if (!key) return null;
+  try {
+    // Lazy require so a missing key never breaks module load.
+    const Stripe = require('stripe');
+    return new Stripe(key, { apiVersion: '2024-06-20' });
+  } catch (e) {
+    return null;
+  }
+}
+
+async function stripeGateway(payment, ctx) {
+  const stripe = getStripe();
   const last4 = String((payment && payment.last4) || '').slice(-4);
-  return { approved: true, last4, provider: 'stripe', externalId: 'pi_' + crypto.randomBytes(8).toString('hex') };
+  if (!stripe) {
+    return {
+      approved: false, last4, provider: 'stripe',
+      error: 'Stripe is not configured (STRIPE_SECRET_KEY missing). Use PAYMENT_METHOD=mock until a PSP key is set.'
+    };
+  }
+  // Real PaymentIntent: amount in cents, currency GBP, attached to the order ref.
+  const intent = await stripe.paymentIntents.create({
+    amount: Math.round(Number(ctx.totalCents || 0)),
+    currency: 'gbp',
+    metadata: { orderRef: ctx.ref, userId: String(ctx.userId || '') },
+    automatic_payment_methods: { enabled: true }
+  });
+  return { approved: true, last4, provider: 'stripe', externalId: intent.id, intent: { status: intent.status, clientSecret: intent.client_secret } };
 }
 
 function paypalGateway(payment) {
   const key = process.env.PAYPAL_CLIENT_ID;
-  if (!key) return { approved: false, provider: 'paypal', error: 'PayPal is not configured (PAYPAL_CLIENT_ID missing). Using mock is recommended until a PSP is set up.' };
+  if (!key) return { approved: false, provider: 'paypal', last4: String((payment && payment.last4) || '').slice(-4), error: 'PayPal is not configured (PAYPAL_CLIENT_ID missing). Use PAYMENT_METHOD=mock until a PSP key is set.' };
   const last4 = String((payment && payment.last4) || '').slice(-4);
   return { approved: true, last4, provider: 'paypal', externalId: 'PP-' + crypto.randomBytes(6).toString('hex').toUpperCase() };
 }
@@ -40,10 +64,26 @@ function activeMethod() {
   return GATEWAYS[m] ? m : 'mock';
 }
 
-function charge(payment) {
+// charge(payment, ctx) -> provider result. ctx carries { totalCents, ref, userId }.
+async function charge(payment, ctx) {
   const method = activeMethod();
-  const result = GATEWAYS[method](payment);
+  const result = await GATEWAYS[method](payment, ctx);
   return { ...result, method };
 }
 
-module.exports = { charge, activeMethod, GATEWAYS };
+// Reserved PSP admin actions (no-op unless provider key is present).
+async function capture(externalId) {
+  const stripe = getStripe();
+  if (!stripe || !externalId) return null;
+  return stripe.paymentIntents.capture(externalId);
+}
+
+async function refund(order, amountCents) {
+  const stripe = getStripe();
+  if (!stripe || !order || !order.externalId) return null;
+  const body = {};
+  if (amountCents) body.amount = amountCents;
+  return stripe.refunds.create({ payment_intent: order.externalId, ...body });
+}
+
+module.exports = { charge, capture, refund, activeMethod, GATEWAYS };
