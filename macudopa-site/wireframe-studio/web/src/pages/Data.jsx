@@ -46,7 +46,8 @@ export function DataPage() {
       const parsed = JSON.parse(text);
       const j = await api('/data/import', { method: 'POST', body: parsed, rawField: 'payload', auth: true });
       const c = j.counts || {};
-      flash(`Imported ${Object.entries(c).map(([k, v]) => `${k}=${typeof v === 'object' ? (v.pages || 0) + v.blocks + (v.users || 0)} : ${v}`).join(', ') || 'data'}.`, true);
+      const parts = Object.entries(c).map(([k, v]) => (typeof v === 'object' ? `${k}=(${v.pages || 0} pages, ${v.blocks || 0} blocks, ${v.users || 0} users)` : `${k}=${v}`));
+      flash(`Imported: ${parts.join(', ') || 'data'}.`, true);
     } catch (e) {
       flash('Import failed: ' + (e.message || 'invalid file'), false);
     } finally {

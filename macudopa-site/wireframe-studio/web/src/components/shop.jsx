@@ -248,15 +248,21 @@ function CheckoutPanel() {
   const [exp, setExp] = useState('12/34');
   const [cvc, setCvc] = useState('123');
   const [name, setName] = useState('');
+  const [provider, setProvider] = useState('mock');
   const last4 = num.replace(/\D/g, '').slice(-4) || '0000';
 
+  useEffect(() => { api('/orders/payment', { auth: false }).then((j) => j && j.provider && setProvider(j.provider)).catch(() => {}); }, []);
+
   const place = () => c.placeOrder({ method, last4 });
+  const hint = provider === 'mock'
+    ? <>Mock gateway — use any card; a number ending in <b>0000</b> is declined.</>
+    : <><b>{provider}</b> provider selected ({provider.toUpperCase()}). Configure your key to go live; it currently approves mock charges.</>;
 
   return (
     <div className="checkout">
       <button className="btn ghost sm" onClick={c.cancelCheckout}>← Back to cart</button>
       <h3 style={{ margin: '12px 0 4px' }}>Payment</h3>
-      <p className="pcard-meta">Mock gateway — use any card; a number ending in <b>0000</b> is declined.</p>
+      <p className="pcard-meta">{hint}</p>
       <div className="field"><label>Name on card</label><input value={name} onChange={(e) => setName(e.target.value)} /></div>
       <div className="field"><label>Card number</label><input value={num} onChange={(e) => setNum(e.target.value)} /></div>
       <div className="grid2" style={{ gap: 8 }}>

@@ -7,9 +7,24 @@ export function MyOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [open, setOpen] = useState(null);
   useEffect(() => { (async () => { try { setOrders(await api('/orders')); } catch (e) { /* noop */ } })(); }, []);
+
+  const exportCsv = () => {
+    const rows = orders.map((o) => o.items.map((it) => ({ ref: o.ref, item: it.name, variant: it.variantLabel || it.variant, qty: it.qty, unit: it.unitPrice, status: o.status, total: o.total, date: o.createdAt })));
+    const cols = ['ref', 'item', 'variant', 'qty', 'unit', 'status', 'total', 'date'];
+    const csv = [cols.join(','), ...rows.map((r) => cols.map((k) => `"${String(r[k] ?? '').replace(/"/g, '""')}"`).join(','))].join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = `macudopa-my-orders.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   return (
     <div className="admin" style={{ maxWidth: 760, margin: '0 auto' }}>
-      <h1>My orders</h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <h1 style={{ flex: 1 }}>My orders</h1>
+        <button className="btn sm" disabled={orders.length === 0} onClick={exportCsv}>Export CSV</button>
+      </div>
       <div className="card">
         {orders.length === 0 && <p className="pcard-meta">You have no orders yet. Head to the <a href="#/shop">Shop</a> to place your first one.</p>}
         {orders.map((o) => (

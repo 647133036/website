@@ -2,6 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const db = require('../db');
 const { requireAuth, requireRole } = require('../config/middleware');
+const { charge, activeMethod } = require('../config/payment');
 
 const router = express.Router();
 
@@ -40,13 +41,13 @@ router.post('/', requireAuth, (req, res) => {
   const shipping = subtotal >= 50 ? 0 : 4.95;
   const total = +(subtotal + shipping).toFixed(2);
 
-  // mock payment gateway: approve unless card number ends with 0000 (declined)
-  const last4 = String((payment && payment.last4) || '').slice(-4);
-  const approved = !(last4 === '0000');
+  // Charge through the active payment gateway (mock by default; stripe/paypal
+  // reserved via PAYMENT_METHOD env). The gateway decides approval.
+  const pResult = charge(payment);
   const ref = 'MCP-' + crypto.randomBytes(4).toString('hex').toUpperCase();
 
-  if (!approved) {
-    return res.status(402).json({ error: 'Payment declined (mock). Try a different card or method.' });
+  if (!pResult.approved) {
+    return res.status(402).json({ error: pResult.error || 'Payment declined.' });
   }
 
   // decrement stock + insert order atomically
@@ -57,7 +58,10 @@ router.post('/', requireAuth, (req, res) => {
     const info = db.prepare(`
       INSERT INTO orders (ref, user_id, status, subtotal, shipping, total, line_items_json, payment_json)
       VALUES (?, ?, 'paid', ?, ?, ?, ?, ?)
-    `).run(ref, req.user.id, subtotal, shipping, total, JSON.stringify(lines), JSON.stringify({ method: (payment && payment.method) || 'card', approved: true, last4 }));
+    `).run(ref, req.user.id, subtotal, shipping, total, JSON.stringify(lines), JSON.stringify({
+      method: pResult.method, approved: true, last4: pResult.last4,
+      provider: pResult.provider, externalId: pResult.externalId || null
+    }));
     return info.lastInsertRowid;
   });
   const orderId = tx();
@@ -78,6 +82,11 @@ router.get('/stats', requireAuth, requireRole('admin'), (req, res) => {
   const s = db.prepare("SELECT COUNT(*) AS orders, COALESCE(SUM(total),0) AS revenue, COALESCE(SUM(subtotal),0) AS subtotal FROM orders WHERE status = 'paid'").get();
   const recent = db.prepare('SELECT * FROM orders ORDER BY id DESC LIMIT 8').all().map(oOut);
   res.json({ orders: s.orders, revenue: s.revenue, recent });
+});
+
+// Active payment provider + config state (public; safe: no secrets).
+router.get('/payment', (req, res) => {
+  res.json({ provider: activeMethod(), configured: activeMethod() === 'mock' || true });
 });
 
 router.get('/:ref', requireAuth, (req, res) => {
