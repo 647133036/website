@@ -31,7 +31,7 @@ export default function App() {
           <Route path="/our-story" element={<PageDetail slug="our-story" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/*" element={<PageDetail slug="home" />} />
+          <Route path="/*" element={<Navigate to="/" replace />} />
         </Routes>
       </StudioShell>
     );
